@@ -1,13 +1,26 @@
 <?php
 
-class Routing {
-    public static function run(string $path) {
-        $path = trim($path, '/');
-        $path = parse_url($path, PHP_URL_PATH);
+require_once 'src/controllers/SecurityController.php';
 
+
+//TODO: Controller singleton
+//TODO: przechwytywanie regeg w index
+class Routing {
+
+    public static $routes = [
+        'login' => ['controller' => 'SecurityController', 'action' => 'login'],
+        'register' => ['controller' => 'SecurityController', 'action' => 'register'],
+        'dashboard' => ['view' => 'dashboard.html'],
+    ];
+
+    public static function run(string $path) {
         switch ($path) {
         case 'login':
-            include 'public/views/login.html';
+        case 'register':
+            $controller = self::$routes[$path]['controller'];
+            $controllerObj = new $controller();
+            $action = self::$routes[$path]['action'];
+            $controllerObj->$action();
             break;
         case 'dashboard':
             include 'public/views/dashboard.html';
