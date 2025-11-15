@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" type="text/css" href="/public/styles/main.css">
@@ -12,31 +13,29 @@
     
     <nav class="top">
         <ul class="left">
-            <li>Progress Bar</li>
+            <li>Lv 12 <meter id="disk_d" value="0.6"></meter> </li>
             <li>1,250 💎</li>
             <li>5 🔥</li>
         </ul>
         <ul class="right">
-            <li>Swipe</li>
-            <li>Quests</li>
-            <li>Leaders</li>
-            <li>Upload</li>
-            <li>Profile</li>
+            <li>Swipe <span class="material-symbols-outlined">home</span></li>
+            <li>Quests <span class="material-symbols-outlined">trophy</span></li>
+            <li>Leaders <span class="material-symbols-outlined">leaderboard</span></li>
+            <li>Upload <span class="material-symbols-outlined">upload</span></li>
+            <li>Profile <span class="material-symbols-outlined">person</span></li>
         </ul>
     </nav>
 
         <div class="container">
-            <main>
             <!-- <?php echo $cards['title'] ?? 'Default Title'; ?> -->
-                    <img src="<?php echo $cards['imageUrlPath'] ?? 'https://picsum.photos/1024'; ?>">
-            </main>
+            <img src="<?php echo $cards['imageUrlPath'] ?? 'https://picsum.photos/126'; ?>">
         </div>
 
     <nav class="bottom">
         <ul>
-            <li>Downvote</li>
-            <li>Comments</li>
-            <li>Upvote</li>
+            <li>Downvote <span class="material-symbols-outlined">thumb_down</span> </li>
+            <li>Comments <span class="material-symbols-outlined">comment</span></li>
+            <li>Upvote <span class="material-symbols-outlined">thumb_up</span></li>
         </ul>
     </nav>
 </body>
