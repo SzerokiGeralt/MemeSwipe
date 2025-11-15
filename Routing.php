@@ -5,8 +5,6 @@ require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/ProfileController.php';
 
 
-//TODO: przechwytywanie regex w index
-// URL: /dashboard/5432
 class Routing {
 
     public static $routes = [

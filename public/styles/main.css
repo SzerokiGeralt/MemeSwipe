@@ -45,27 +45,102 @@
 
 body {
     font-family: 'Spline Sans', Arial, sans-serif;
-    background-color: var(--Background);
+    background-image: url(resources/MemeSwipeTile.png);
+    background-repeat: repeat-x repeat-y;
+    background-position: top left;
+    background-size: 256px 256px;
     color: var(--White);
     margin: 0;
     padding: 0;
     text-align: center;
     display: flex;
     flex-direction: column;
+    min-height: 100vh; /* Wypełnia cały ekran */
+    overflow: hidden; /* Zapobiega scrollbarowi */
 }
-nav {
-    background-color: #cc1414;
+nav.top {
+    background-color: var(--BackgroundSecondary);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Rozdziela lewą i prawą część */
+    align-items: center;
+    padding: 1rem 2rem;
+    outline: 2px solid var(--LightGray);
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 2rem;
 }
+
+nav.top ul {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1.5rem;
+}
+
+nav.top ul.left {
+    justify-content: flex-start;
+}
+
+nav ul.right {
+    justify-content: flex-end;
+}
+
+nav.bottom {
+    background-color: var(--BackgroundSecondary);
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem 2rem;
+    outline: 2px solid var(--LightGray);
+}
+
+nav.bottom ul {
+    justify-content: space-around; 
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1.5rem;
+    width: 100%;
+}
+
 .container {
-    background-color: #54cc14;
-    display: grid;
-    grid-template-columns: 20% 80%;
+    flex: 1; /* Wypełnia całą dostępną przestrzeń między navbarami */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+    overflow: hidden;
 }
-aside {
-    background-color: #124ea8;
+
+.container main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
 }
-main {
-    background-color: #da8c0e;
+
+.container main img {
+    object-fit: contain;
+    border-radius: 1rem;
+    max-width: 100%; /* Skaluje się do rozmiaru kontenera */
+    max-height: 60%; /* Skaluje się do rozmiaru kontenera */
+    min-height: 60%;
+    min-width: 60%;
+    width: auto; /* Zachowuje proporcje */
+    height: auto; /* Zachowuje proporcje */
 }
 
 @media screen and (max-width: 400px) {
