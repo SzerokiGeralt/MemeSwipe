@@ -82,6 +82,8 @@ nav.top {
   z-index: 100;
 }
 
+
+
 nav.top ul {
   display: flex;
   flex-direction: row;
@@ -111,6 +113,19 @@ nav.bottom {
   display: flex;
   flex-shrink: 0;
   flex-direction: row;
+  align-items: center;
+  padding: 1rem 2rem;
+  outline: 2px solid var(--LightGray);
+  height: var(--navbar-height);
+  z-index: 100;
+}
+
+nav.bottom.mobile-only.anchor {
+  background-color: var(--BackgroundSecondary);
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
   align-items: center;
   padding: 1rem 2rem;
   outline: 2px solid var(--LightGray);

@@ -12,7 +12,7 @@ class DashboardController extends AppController {
                 'id' => 1,
                 'title' => 'Ace of Spades',
                 'subtitle' => 'Legendary card',
-                'imageUrlPath' => 'https://deckofcardsapi.com/static/img/AS.png',
+                'imageUrlPath' => 'https://img.joemonster.org/mg/albums/062022/main_19te_bym_si_napi_z_wujkiem_vesemirem.jpg',
                 'href' => '/cards/ace-of-spades'
             ],
             [

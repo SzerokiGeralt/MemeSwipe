@@ -3,6 +3,7 @@
 require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/ProfileController.php';
+require_once 'src/controllers/UploadController.php';
 
 
 class Routing {
@@ -12,6 +13,7 @@ class Routing {
         'register' => ['controller' => 'SecurityController', 'action' => 'register'],
         'dashboard' => ['controller' => 'DashboardController', 'action' => 'index'], 
         'profile' => ['controller' => 'ProfileController', 'action' => 'show'],
+        'upload' => ['controller' => 'UploadController', 'action' => 'upload']
     ];
 
     // Singleton
@@ -35,6 +37,7 @@ class Routing {
         case 'register':
         case 'dashboard':
         case 'profile':
+        case 'upload':
             $controllerName = self::$routes[$page]['controller'];
             $action = self::$routes[$page]['action'];
 
