@@ -9,7 +9,27 @@
     <script src="/public/scripts/main.js" defer></script>
 </head>
 <body>
-    <h1>Welcome to the Dashboard</h1>
-    <p>This is the dashboard page.</p>
+    
+    <nav>
+        <p>Logo</p>
+        <ul>
+            <li>HOME</li>
+            <li>USER</li>
+            <li>SETTINGS</li>
+        </ul>
+
+        <div class="container">
+            <aside>LINKI</aside>
+            <main>DASHBOARD
+            <ul>
+
+                <li>
+                    <?php echo $cards['title'] ?? 'Default Title'; ?>
+                    <img src="<?php echo $cards['imageUrlPath'] ?? 'https://picsum.photos/200'; ?>">
+                </li>
+
+            </ul>
+            </main>
+        </div>
 </body>
 </html>

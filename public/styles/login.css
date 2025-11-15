@@ -13,3 +13,10 @@ form {
     width: 45vw;
     background-color: #424242;
 }
+
+@media screen and (max-width: 480px) {
+    form {
+        width: 100vw;
+    }
+    
+}

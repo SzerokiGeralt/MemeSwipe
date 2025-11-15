@@ -1,8 +1,85 @@
+@font-face {
+  font-family: 'Spline Sans';
+  src: url('fonts/SplineSans-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Spline Sans';
+  src: url('fonts/SplineSans-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Spline Sans';
+  src: url('fonts/SplineSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Spline Sans';
+  src: url('fonts/SplineSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Spline Sans';
+  src: url('fonts/SplineSans-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+:root {
+  --font-family-spline-sans: 'Spline Sans', sans-serif;
+  --Background: rgba(18, 18, 18, 1);
+  --LightGray: rgba(156, 163, 175, 1);
+  --VibrantOrange: rgba(249, 115, 22, 1);
+  --BackgroundSecondary: rgba(26, 26, 26, 1);
+  --OrangeSecondary: rgba(204, 170, 142, 1);
+  --White: rgba(249, 236, 236, 1);
+  --OrangeTransparent: rgba(249, 115, 22, 0.1);
+}
+
 body {
-    font-family: 'Poppins', Arial, sans-serif;
-    background-color: #181a1b;
-    color: #fff;
+    font-family: 'Spline Sans', Arial, sans-serif;
+    background-color: var(--Background);
+    color: var(--White);
     margin: 0;
     padding: 0;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+nav {
+    background-color: #cc1414;
+}
+.container {
+    background-color: #54cc14;
+    display: grid;
+    grid-template-columns: 20% 80%;
+}
+aside {
+    background-color: #124ea8;
+}
+main {
+    background-color: #da8c0e;
+}
+
+@media screen and (max-width: 400px) {
+    .container {
+    grid-template-columns: 1fr;
+    }
+    aside {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4 rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
 }
