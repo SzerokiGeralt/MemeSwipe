@@ -18,24 +18,30 @@
             <li>5 🔥</li>
         </ul>
         <ul class="right">
-            <li>Swipe <span class="material-symbols-outlined">home</span></li>
-            <li>Quests <span class="material-symbols-outlined">trophy</span></li>
-            <li>Leaders <span class="material-symbols-outlined">leaderboard</span></li>
-            <li>Upload <span class="material-symbols-outlined">upload</span></li>
-            <li>Profile <span class="material-symbols-outlined">person</span></li>
+            <li class="desktop-only">Swipe<span class="material-symbols-outlined">home</span></li>
+            <li class="desktop-only">Quests<span class="material-symbols-outlined">trophy</span></li>
+            <li class="desktop-only">Leaders<span class="material-symbols-outlined">leaderboard</span></li>
+            <li class="desktop-only">Upload<span class="material-symbols-outlined">upload</span></li>
+            <li class="desktop-only">Profile<span class="material-symbols-outlined">person</span></li>
         </ul>
     </nav>
 
         <div class="container">
             <!-- <?php echo $cards['title'] ?? 'Default Title'; ?> -->
-            <img src="<?php echo $cards['imageUrlPath'] ?? 'https://picsum.photos/126'; ?>">
+            <img src="<?php echo $cards['imageUrlPath'] ?? 'https://picsum.photos/2156/1228'; ?>">
         </div>
 
     <nav class="bottom">
         <ul>
-            <li>Downvote <span class="material-symbols-outlined">thumb_down</span> </li>
-            <li>Comments <span class="material-symbols-outlined">comment</span></li>
-            <li>Upvote <span class="material-symbols-outlined">thumb_up</span></li>
+            <li class="desktop-only">Downvote <span class="material-symbols-outlined">thumb_down</span></li>
+            <li class="desktop-only">Comments <span class="material-symbols-outlined">comment</span></li>
+            <li class="desktop-only">Upvote <span class="material-symbols-outlined">thumb_up</span></li>
+            
+            <li class="mobile-only">Swipe<span class="material-symbols-outlined">home</span></li>
+            <li class="mobile-only">Quests<span class="material-symbols-outlined">trophy</span></li>
+            <li class="mobile-only">Leaders<span class="material-symbols-outlined">leaderboard</span></li>
+            <li class="mobile-only">Upload<span class="material-symbols-outlined">upload</span></li>
+            <li class="mobile-only">Profile<span class="material-symbols-outlined">person</span></li>
         </ul>
     </nav>
 </body>
