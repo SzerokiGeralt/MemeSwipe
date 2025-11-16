@@ -1,7 +1,65 @@
 <!DOCTYPE html>
 <html>
-<head><title>Profile</title></head>
+<head>
+    <title>Profile</title>
+    <link rel="stylesheet" type="text/css" href="/public/styles/main.css">
+    <link rel="stylesheet" type="text/css" href="/public/styles/profile.css">
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 <body>
-    <h1>Id użytkownika <?= $user['id'] ?>!</h1>
+    <nav class="top desktop-only anchor">
+        <ul class="left">
+            <li>Lvl 12 <meter id="disk_d" value="0.6"></meter> </li>
+            <li>1,250 💎</li>
+            <li>5 🔥</li>
+        </ul>
+        <ul class="right">
+            <li><a href="/dashboard">Swipe<span class="material-symbols-outlined">home</span></a></li>
+            <li><a href="/quests">Quests<span class="material-symbols-outlined">trophy</span></a></li>
+            <li><a href="/leaders">Leaders<span class="material-symbols-outlined">leaderboard</span></a></li>
+            <li><a href="/upload">Upload<span class="material-symbols-outlined">upload</span></a></li>
+            <li><a href="/profile">Profile<span class="material-symbols-outlined">person</span></a></li>
+        </ul>
+    </nav>
+    <nav class="top mobile-only anchor">
+        <ul>
+            <li>Lvl 12 <meter id="disk_d" value="0.6"></meter> </li>
+            <li>1,250 💎</li>
+            <li>5 🔥</li>
+        </ul>
+    </nav>
+    <main>
+        <div>
+            <img class="profile-image" src="<?php echo $user['imageUrlPath'] ?? 'https://picsum.photos/2156/1228'; ?>">
+            <h1><?php echo $user['nickname'] ?? 'User'; ?></h1>
+            <p>Level <?php echo $user['level'] ?? 1 ?></p>
+            <p>Streak: <?php echo $user['streak'] ?? 0 ?> 🔥</p>
+            <div class="selection-bar">
+                <button>Stats</button>
+                <button>Achievements</button>
+            </div>    
+            <div class="stats">
+                <p>Taste index 90%</p>
+                <p>Longest streak 45</p>
+                <p>Posts 60</p>
+            </div>
+            <div class="achievements">
+                <p>Taste index 90%</p>
+                <p>Longest streak 45</p>
+                <p>Posts 60</p>
+            </div>
+        </div>
+    </main>
+        <nav class="bottom mobile-only anchor">
+        <ul>
+            <li class="mobile-only"><a href="/dashboard">Swipe<span class="material-symbols-outlined">home</span></a></li>
+            <li class="mobile-only"><a href="/quests">Quests<span class="material-symbols-outlined">trophy</span></a></li>
+            <li class="mobile-only"><a href="/leaders">Leaders<span class="material-symbols-outlined">leaderboard</span></a></li>
+            <li class="mobile-only"><a href="/upload">Upload<span class="material-symbols-outlined">upload</span></a></li>
+            <li class="mobile-only"><a href="/profile">Profile<span class="material-symbols-outlined">person</span></a></li>
+        </ul>
+    </nav>
 </body>
 </html>

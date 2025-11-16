@@ -13,16 +13,16 @@
     
     <nav class="top">
         <ul class="left">
-            <li>Lv 12 <meter id="disk_d" value="0.6"></meter> </li>
+            <li>Lvl 12 <meter id="disk_d" value="0.6"></meter> </li>
             <li>1,250 💎</li>
             <li>5 🔥</li>
         </ul>
         <ul class="right">
-            <li class="desktop-only">Swipe<span class="material-symbols-outlined">home</span></li>
-            <li class="desktop-only">Quests<span class="material-symbols-outlined">trophy</span></li>
-            <li class="desktop-only">Leaders<span class="material-symbols-outlined">leaderboard</span></li>
-            <li class="desktop-only">Upload<span class="material-symbols-outlined">upload</span></li>
-            <li class="desktop-only">Profile<span class="material-symbols-outlined">person</span></li>
+            <li class="desktop-only"><a href="/dashboard">Swipe<span class="material-symbols-outlined">home</span></a></li>
+            <li class="desktop-only"><a href="/quests">Quests<span class="material-symbols-outlined">trophy</span></a></li>
+            <li class="desktop-only"><a href="/leaders">Leaders<span class="material-symbols-outlined">leaderboard</span></a></li>
+            <li class="desktop-only"><a href="/upload">Upload<span class="material-symbols-outlined">upload</span></a></li>
+            <li class="desktop-only"><a href="/profile">Profile<span class="material-symbols-outlined">person</span></a></li>
         </ul>
     </nav>
 
@@ -33,15 +33,18 @@
 
     <nav class="bottom">
         <ul>
-            <li class="desktop-only">Downvote <span class="material-symbols-outlined">thumb_down</span></li>
-            <li class="desktop-only">Comments <span class="material-symbols-outlined">comment</span></li>
-            <li class="desktop-only">Upvote <span class="material-symbols-outlined">thumb_up</span></li>
-            
-            <li class="mobile-only">Swipe<span class="material-symbols-outlined">home</span></li>
-            <li class="mobile-only">Quests<span class="material-symbols-outlined">trophy</span></li>
-            <li class="mobile-only">Leaders<span class="material-symbols-outlined">leaderboard</span></li>
-            <li class="mobile-only">Upload<span class="material-symbols-outlined">upload</span></li>
-            <li class="mobile-only">Profile<span class="material-symbols-outlined">person</span></li>
+            <li class="desktop-only"><button type="button" id="downvote-btn">Downvote <span class="material-symbols-outlined">thumb_down</span></button></li>
+            <li class="desktop-only"><button type="button" id="comments-btn">Comments <span class="material-symbols-outlined">comment</span></button></li>
+            <li class="desktop-only"><button type="button" id="upvote-btn">Upvote <span class="material-symbols-outlined">thumb_up</span></button></li>
+        </ul>
+    </nav>
+    <nav class="bottom mobile-only anchor">
+        <ul>
+            <li class="mobile-only"><a href="/dashboard">Swipe<span class="material-symbols-outlined">home</span></a></li>
+            <li class="mobile-only"><a href="/quests">Quests<span class="material-symbols-outlined">trophy</span></a></li>
+            <li class="mobile-only"><a href="/leaders">Leaders<span class="material-symbols-outlined">leaderboard</span></a></li>
+            <li class="mobile-only"><a href="/upload">Upload<span class="material-symbols-outlined">upload</span></a></li>
+            <li class="mobile-only"><a href="/profile">Profile<span class="material-symbols-outlined">person</span></a></li>
         </ul>
     </nav>
 </body>
