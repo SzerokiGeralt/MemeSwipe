@@ -4,6 +4,8 @@ require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/ProfileController.php';
 require_once 'src/controllers/UploadController.php';
+require_once 'src/controllers/QuestsController.php';
+require_once 'src/controllers/LeadersController.php';
 
 
 class Routing {
@@ -13,7 +15,9 @@ class Routing {
         'register' => ['controller' => 'SecurityController', 'action' => 'register'],
         'dashboard' => ['controller' => 'DashboardController', 'action' => 'index'], 
         'profile' => ['controller' => 'ProfileController', 'action' => 'show'],
-        'upload' => ['controller' => 'UploadController', 'action' => 'upload']
+        'upload' => ['controller' => 'UploadController', 'action' => 'upload'],
+        'quests' => ['controller' => 'QuestsController', 'action' => 'index'],
+        'leaders' => ['controller' => 'LeadersController', 'action' => 'index']
     ];
 
     // Singleton
@@ -32,22 +36,14 @@ class Routing {
         $page = $pathParts[0] ?? ''; 
         $id = $pathParts[1] ?? '';   
 
-        switch ($page) {
-        case 'login':
-        case 'register':
-        case 'dashboard':
-        case 'profile':
-        case 'upload':
-            $controllerName = self::$routes[$page]['controller'];
-            $action = self::$routes[$page]['action'];
-
-            $controllerObj = self::getController($controllerName);
-            $controllerObj->$action($id);
-            break;
-        default:
+        if (!array_key_exists($page, self::$routes)) {
             http_response_code(404);
             include 'public/views/404.html';
-            break;
+        } else {
+            $controllerName = self::$routes[$page]['controller'];
+            $action = self::$routes[$page]['action'];
+            $controllerObj = self::getController($controllerName);
+            $controllerObj->$action($id);
         }
     }
 }
