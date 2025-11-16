@@ -51,7 +51,6 @@
 }
 
 html, body {
-  height: 100%;
   margin: 0;
   padding: 0;
 }
@@ -165,7 +164,8 @@ nav.bottom ul li {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex-direction: column-reverse
+  flex-direction: column-reverse;
+  width: 100%;
 }
 
 /* Mobile */
@@ -224,6 +224,7 @@ nav button {
   cursor: pointer;
   transition: color 0.2s, transform 0.1s;
   padding: 0;
+  width: 100%;
 }
 
 nav button:hover {
@@ -276,8 +277,25 @@ hr {
   flex-direction: row;
   justify-content: space-around;
   gap: 2px;
-
+  background-color: var(--BackgroundSecondary);
   outline-color: var(--LightGray);
   outline-width: 1px;
   outline-style: solid;
+}
+
+main.scrollable {
+    margin-left: 15vw;
+    margin-right: 15vw;
+    margin-top: var(--navbar-height);
+    padding: 0;
+    min-height: calc(100vh - var(--navbar-height));
+    align-content: center;
+    background-color: var(--Background);
+    }
+
+@media screen and (max-width: 768px) {
+    main.scrollable {
+        margin-left: 0;
+        margin-right: 0;
+    }
 }

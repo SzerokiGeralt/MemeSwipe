@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Profile</title>
+    <title>Blank Scrollable Page</title>
     <link rel="stylesheet" type="text/css" href="/public/styles/main.css">
-    <link rel="stylesheet" type="text/css" href="/public/styles/profile.css">
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,27 +29,9 @@
             <li>5 🔥</li>
         </ul>
     </nav>
-    <main class="scrollable">
-        <div>
-            <img class="profile-image" src="<?php echo $user['imageUrlPath'] ?? 'https://picsum.photos/2156/1228'; ?>">
-            <h1><?php echo $user['nickname'] ?? 'User'; ?></h1>
-            <p>Level <?php echo $user['level'] ?? 1 ?></p>
-            <p>Streak: <?php echo $user['streak'] ?? 0 ?> 🔥</p>
-            <div class="selection-bar">
-                <button>Stats</button>
-                <button>Achievements</button>
-            </div>    
-            <div class="stats">
-                <p>Taste index 90%</p>
-                <p>Longest streak 45</p>
-                <p>Posts 60</p>
-            </div>
-            <div class="achievements">
-                <p>Taste index 90%</p>
-                <p>Longest streak 45</p>
-                <p>Posts 60</p>
-            </div>
-        </div>
+    <main>
+        <h1>Blank Scrollable Page</h1>
+        <p>This is a blank scrollable page.</p>
     </main>
         <nav class="bottom mobile-only anchor">
         <ul>

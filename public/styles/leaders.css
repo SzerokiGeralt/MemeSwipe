@@ -1,0 +1,8 @@
+main.scrollable {
+    align-content: baseline;
+}
+
+div.selection-bar {
+    position: sticky;
+    top: var(--navbar-height);
+}
