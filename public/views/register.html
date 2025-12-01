@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/public/styles/main.css">
     <link rel="stylesheet" type="text/css" href="/public/styles/login.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <title>Login</title>
+    <title>Register</title>
 </head>
 <body>
     <nav class="top desktop-only anchor">
@@ -36,24 +36,31 @@
             <?= $messages; ?>
             </p>
         <?php endif; ?>
-        <form action="/login" method="post">
-            <h1>Login</h1>
-            <input type="email" id="email" name="email" placeholder="Email" required>
+        <form method="post" action="/register">
+            <h1>Register</h1>
+            <input type="text" id="username" name="username" placeholder="Username" 
+                value="<?= htmlspecialchars($username ?? '') ?>" required>
             <br>
-            <input type="password" id="password" name="password" placeholder="Password" required>
+            <input type="email" id="email" name="email" placeholder="Email" 
+                value="<?= htmlspecialchars($email ?? '') ?>" required>
             <br>
-            <input type="submit" value="Login">
+            <input type="password" id="password" name="password" placeholder="Password (min. 8 characters)" required>
+            <br>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+            <br>
+            <input type="submit" value="Register">
         </form>
-        <p>Don't have an account? <a href="/register">Register</a></p>
+        
+        <p>Already have an account? <a href="/login">Login</a></p>
     </main>
     <nav class="bottom mobile-only anchor">
-        <ul>
-            <li class="mobile-only"><a href="/dashboard">Swipe<span class="material-symbols-outlined">home</span></a></li>
-            <li class="mobile-only"><a href="/quests">Quests<span class="material-symbols-outlined">trophy</span></a></li>
-            <li class="mobile-only"><a href="/leaders">Leaders<span class="material-symbols-outlined">leaderboard</span></a></li>
-            <li class="mobile-only"><a href="/upload">Upload<span class="material-symbols-outlined">upload</span></a></li>
-            <li class="mobile-only"><a href="/profile">Profile<span class="material-symbols-outlined">person</span></a></li>
-        </ul>
+            <ul>
+                <li class="mobile-only"><a href="/dashboard">Swipe<span class="material-symbols-outlined">home</span></a></li>
+                <li class="mobile-only"><a href="/quests">Quests<span class="material-symbols-outlined">trophy</span></a></li>
+                <li class="mobile-only"><a href="/leaders">Leaders<span class="material-symbols-outlined">leaderboard</span></a></li>
+                <li class="mobile-only"><a href="/upload">Upload<span class="material-symbols-outlined">upload</span></a></li>
+                <li class="mobile-only"><a href="/profile">Profile<span class="material-symbols-outlined">person</span></a></li>
+            </ul>
     </nav>
 </body>
 </html>
