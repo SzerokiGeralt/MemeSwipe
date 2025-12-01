@@ -47,6 +47,8 @@
 
 
 
+
+
 * {
   box-sizing: border-box;
 }
@@ -191,7 +193,23 @@ nav.bottom ul li {
   }
 }
 
-/* Style dla linków nawigacyjnych */
+/* Domyślne style dla wszystkich linków (poza nawigacją) */
+a {
+  color: var(--VibrantOrange);
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--OrangeHover);
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--OrangeSecondary);
+}
+
+/* Style dla linków nawigacyjnych - nadpisują domyślne */
 nav a {
   color: var(--White);
   text-decoration: none;
@@ -206,6 +224,10 @@ nav a {
 nav a:hover {
   color: var(--VibrantOrange);
   transform: scale(1.05);
+}
+
+nav a:visited {
+  color: var(--White);
 }
 
 nav a:active {
@@ -298,5 +320,7 @@ main.scrollable {
     main.scrollable {
         margin-left: 0;
         margin-right: 0;
+        margin-bottom: var(--navbar-height);
     }
 }
+

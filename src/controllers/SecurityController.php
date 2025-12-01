@@ -6,29 +6,12 @@ require_once __DIR__ . '/../repository/UserRepository.php';
 
 class SecurityController extends AppController {
 
-    private static $instance = null;
-
+    private $userRepository;
+    
     public function __construct() {
         $this->userRepository = new UserRepository();
     }
-    private function __clone() {}
-    public function __wakeup()
-    {
-        throw new \Exception("Cannot unserialize singleton");
-    }
 
-    public static function getInstance(): self
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
-    private $userRepository;
-
-    
 
     public function login() {
         // TODO: Get data from login form
