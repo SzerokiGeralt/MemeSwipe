@@ -33,7 +33,11 @@ class SecurityController extends AppController {
                 return $this->render('login', ['messages' => 'Wrong password']);
             }
             
-            // Successful login
+            // Successful login - store user info in session
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['email'] = $user['email'];
+            
             $url = "http://$_SERVER[HTTP_HOST]";
             header("Location: {$url}/dashboard");
             exit();
@@ -67,6 +71,14 @@ class SecurityController extends AppController {
             exit();
         }
         return $this->render('register');
+    }
+
+    public function logout() {
+        // Destroy session and redirect to login
+        session_unset();
+        session_destroy();
+        header('Location: /login');
+        exit();
     }
 }
 

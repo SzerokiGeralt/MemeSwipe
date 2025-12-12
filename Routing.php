@@ -9,10 +9,16 @@ require_once 'src/controllers/LeadersController.php';
 
 
 class Routing {
+    //TODO:
+    //Regex
+    //Singleton
+    //Inarray of routes
+    //User session
 
     public static $routes = [
         'login' => ['controller' => 'SecurityController', 'action' => 'login'],
         'register' => ['controller' => 'SecurityController', 'action' => 'register'],
+        'logout' => ['controller' => 'SecurityController', 'action' => 'logout'],
         'dashboard' => ['controller' => 'DashboardController', 'action' => 'index'], 
         'profile' => ['controller' => 'ProfileController', 'action' => 'show'],
         'upload' => ['controller' => 'UploadController', 'action' => 'upload'],
@@ -34,7 +40,7 @@ class Routing {
         $path = trim($path, '/');
         $pathParts = explode('/', $path);
         $page = $pathParts[0] ?? ''; 
-        $id = $pathParts[1] ?? '';   
+        $param = $pathParts[1] ?? '';   
 
         if (!array_key_exists($page, self::$routes)) {
             http_response_code(404);
@@ -43,7 +49,7 @@ class Routing {
             $controllerName = self::$routes[$page]['controller'];
             $action = self::$routes[$page]['action'];
             $controllerObj = self::getController($controllerName);
-            $controllerObj->$action($id);
+            $controllerObj->$action($param);
         }
     }
 }
