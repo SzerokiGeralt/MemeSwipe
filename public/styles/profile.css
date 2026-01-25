@@ -6,3 +6,45 @@
     border-style: solid;
     border-width: 3px;
 }
+
+/* Tab content styling */
+.tab-content {
+    display: none;
+    padding: 2rem;
+    background-color: var(--BackgroundSecondary);
+    border-radius: 8px;
+    margin-top: 1rem;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+/* Selection bar button styling */
+.selection-bar .tab-button {
+    transition: all 0.3s ease;
+}
+
+.selection-bar .tab-button.active {
+    background: var(--VibrantOrange);
+    color: var(--White);
+    border-bottom: 3px solid var(--VibrantOrange);
+    transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

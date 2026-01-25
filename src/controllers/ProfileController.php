@@ -1,12 +1,15 @@
 <?php
 require_once 'AppController.php';
 require_once __DIR__ . '/../repository/UserRepository.php';
+require_once __DIR__ . '/../repository/UserStatsRepository.php';
 
 class ProfileController extends AppController {
     private $userRepository;
+    private $userStatsRepository;
 
     public function __construct() {
         $this->userRepository = new UserRepository();
+        $this->userStatsRepository = new UserStatsRepository();
     }
 
     public function show(?string $username) {
@@ -31,12 +34,13 @@ class ProfileController extends AppController {
             return $this->render('404', ['message' => "User '$username' not found."]);
         }
 
-        // TODO: Get user stats from user_stats table
-        $userStats = [
-            'level' => 12,
-            'streak' => 5,
-            'diamonds' => 1250
-        ];
+        // Get user stats from user_stats table
+        $userStats = $this->userStatsRepository->getStatsByUserId($user['id']);
+        
+        // If no stats exist, create default stats
+        if (!$userStats) {
+            $userStats = $this->userStatsRepository->createStatsForUser($user['id']);
+        }
 
         // Check if viewing own profile
         $isOwnProfile = isset($_SESSION['user_id']) && $_SESSION['user_id'] == $user['id'];
