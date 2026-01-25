@@ -40,6 +40,7 @@
             <h1><?php echo htmlspecialchars($user['username']) ?? 'User'; ?></h1>
             <p>Level <?php echo $stats['level'] ?? 1 ?></p>
             <p>Streak: <?php echo $stats['streak'] ?? 0 ?> 🔥</p>
+            <p>Diamonds: <?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</p>
             
             <?php if ($isOwnProfile ?? false): ?>
                 <div style="display: flex; gap: 1rem; justify-content: center; margin: 1rem 0;">

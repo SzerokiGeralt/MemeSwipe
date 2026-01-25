@@ -1,8 +1,162 @@
 main.scrollable {
     align-content: baseline;
+    padding: 2rem;
 }
 
 div.selection-bar {
     position: sticky;
     top: var(--navbar-height);
+    margin-bottom: 2rem;
+}
+
+/* Selection bar button styling - tak samo jak w profile */
+.selection-bar .tab-button {
+    transition: all 0.3s ease;
+}
+
+.selection-bar .tab-button.active {
+    background: var(--VibrantOrange);
+    color: var(--White);
+    border-bottom: 3px solid var(--VibrantOrange);
+    transform: scale(1.05);
+}
+
+/* Leaderboard container */
+.leaderboard-container {
+    background-color: var(--BackgroundSecondary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Leaderboard table */
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--Background);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.leaderboard-table thead {
+    background-color: var(--VibrantOrange);
+    color: white;
+}
+
+.leaderboard-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.leaderboard-table tbody tr {
+    border-bottom: 1px solid var(--LightGray);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.leaderboard-table tbody tr:hover {
+    background-color: rgba(255, 115, 0, 0.1);
+    transform: scale(1.01);
+    cursor: pointer;
+}
+
+.leaderboard-table td {
+    padding: 1rem;
+    text-align: left;
+}
+
+/* Rank column */
+.rank {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.medal {
+    font-size: 2rem;
+}
+
+.rank-number {
+    color: var(--TextPrimary);
+}
+
+/* User info column */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid var(--VibrantOrange);
+    object-fit: cover;
+}
+
+.username {
+    font-weight: 600;
+    color: var(--TextPrimary);
+}
+
+/* Stats columns */
+.level, .upvotes, .posts, .streak {
+    font-weight: 500;
+    color: var(--TextPrimary);
+}
+
+.upvotes {
+    color: var(--VibrantOrange);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.upvotes .material-symbols-outlined {
+    font-size: 1.2rem;
+}
+
+/* No data message */
+.no-data {
+    text-align: center;
+    padding: 2rem;
+    color: var(--LightGray);
+    font-size: 1.1rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    main.scrollable {
+        padding: 1rem;
+    }
+
+    .leaderboard-table {
+        font-size: 0.85rem;
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 0.5rem;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .medal {
+        font-size: 1.5rem;
+    }
+
+    /* Hide some columns on mobile */
+    .leaderboard-table th:nth-child(5),
+    .leaderboard-table td:nth-child(5),
+    .leaderboard-table th:nth-child(6),
+    .leaderboard-table td:nth-child(6) {
+        display: none;
+    }
 }
