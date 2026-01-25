@@ -26,6 +26,12 @@ class Routing {
         'leaders' => ['controller' => 'LeadersController', 'action' => 'index']
     ];
 
+    // Special routes that require exact path matching
+    public static $specialRoutes = [
+        'profile/edit' => ['controller' => 'ProfileController', 'action' => 'edit'],
+        'profile/update' => ['controller' => 'ProfileController', 'action' => 'update']
+    ];
+
     // Singleton
     private static $controllerInstances = [];
 
@@ -38,6 +44,17 @@ class Routing {
 
     public static function run(string $path) {
         $path = trim($path, '/');
+        
+        // Check special routes first (exact match)
+        if (array_key_exists($path, self::$specialRoutes)) {
+            $controllerName = self::$specialRoutes[$path]['controller'];
+            $action = self::$specialRoutes[$path]['action'];
+            $controllerObj = self::getController($controllerName);
+            $controllerObj->$action();
+            return;
+        }
+        
+        // Regular routes with parameters
         $pathParts = explode('/', $path);
         $page = $pathParts[0] ?? ''; 
         $param = $pathParts[1] ?? '';   

@@ -82,4 +82,42 @@ class UserRepository extends Repository {
         $query->execute([$username, $email, password_hash($password, PASSWORD_BCRYPT)]);
         return;
     }
+
+    public function updateUser(int $userId, string $username, string $email, string $profilePhoto = null) {
+        if ($profilePhoto) {
+            $query = $this->database->connect()->prepare('
+                UPDATE users 
+                SET username = :username, email = :email, profile_photo = :profile_photo
+                WHERE id = :id
+            ');
+            $query->bindParam(':profile_photo', $profilePhoto);
+        } else {
+            $query = $this->database->connect()->prepare('
+                UPDATE users 
+                SET username = :username, email = :email
+                WHERE id = :id
+            ');
+        }
+        
+        $query->bindParam(':username', $username);
+        $query->bindParam(':email', $email);
+        $query->bindParam(':id', $userId, PDO::PARAM_INT);
+        $query->execute();
+        $query = null;
+        return;
+    }
+
+    public function updatePassword(int $userId, string $newPassword) {
+        $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+        $query = $this->database->connect()->prepare('
+            UPDATE users 
+            SET password = :password
+            WHERE id = :id
+        ');
+        $query->bindParam(':password', $hashedPassword);
+        $query->bindParam(':id', $userId, PDO::PARAM_INT);
+        $query->execute();
+        $query = null;
+        return;
+    }
 }

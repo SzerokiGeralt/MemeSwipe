@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Profile</title>
+    <link rel="stylesheet" type="text/css" href="/public/styles/main.css">
+    <link rel="stylesheet" type="text/css" href="/public/styles/profile.css">
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <nav class="top desktop-only anchor">
+        <ul class="left">
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['experience'] ?? 0) / 100; ?>"></meter></li>
+            <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+        <?php endif; ?>
+        </ul>
+        <ul class="right">
+            <li><a href="/dashboard">Swipe<span class="material-symbols-outlined">home</span></a></li>
+            <li><a href="/quests">Quests<span class="material-symbols-outlined">trophy</span></a></li>
+            <li><a href="/leaders">Leaders<span class="material-symbols-outlined">leaderboard</span></a></li>
+            <li><a href="/upload">Upload<span class="material-symbols-outlined">upload</span></a></li>
+            <li><a href="/profile">Profile<span class="material-symbols-outlined">person</span></a></li>
+        </ul>
+    </nav>
+    <nav class="top mobile-only anchor">
+        <ul>
+            <?php if (isset($_SESSION['user_id'])): ?>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['experience'] ?? 0) / 100; ?>"></meter></li>
+            <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+    <main class="scrollable">
+        <div class="edit-profile-container">
+            <h1>Edit Profile</h1>
+            
+            <?php if (isset($messages)): ?>
+                <div class="error-message">
+                    <?php echo htmlspecialchars($messages); ?>
+                </div>
+            <?php endif; ?>
+            
+            <form method="POST" action="/profile/update" class="edit-profile-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['username'] ?? ''); ?>" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="profile_photo">Profile Photo URL</label>
+                    <input type="url" id="profile_photo" name="profile_photo" value="<?php echo htmlspecialchars($user['profile_photo'] ?? ''); ?>" placeholder="https://example.com/photo.jpg">
+                    <small>Enter a URL to your profile photo</small>
+                </div>
+                
+                <div class="password-section">
+                    <h2>Change Password</h2>
+                    <p class="password-note">Leave blank if you don't want to change your password</p>
+                    
+                    <div class="form-group">
+                        <label for="current_password">Current Password</label>
+                        <input type="password" id="current_password" name="current_password" placeholder="Enter current password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new_password">New Password</label>
+                        <input type="password" id="new_password" name="new_password" placeholder="Enter new password">
+                        <small>Minimum 6 characters</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm New Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm new password">
+                    </div>
+                </div>
+                
+                <div class="profile-photo-preview">
+                    <label>Current Profile Photo:</label>
+                    <img src="<?php echo htmlspecialchars($user['profile_photo'] ?? 'https://picsum.photos/150/150'); ?>" alt="Profile Photo" id="preview-image">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Save Changes</button>
+                    <a href="/profile" class="btn-cancel">Cancel</a>
+                </div>
+            </form>
+        </div>
+        
+        <script>
+            // Preview profile photo on URL change
+            document.getElementById('profile_photo').addEventListener('input', function(e) {
+                const url = e.target.value;
+                const preview = document.getElementById('preview-image');
+                if (url) {
+                    preview.src = url;
+                    preview.onerror = function() {
+                        preview.src = 'https://picsum.photos/150/150';
+                    };
+                }
+            });
+        </script>
+    </main>
+    <nav class="bottom mobile-only anchor">
+        <ul>
+            <li class="mobile-only"><a href="/dashboard">Swipe<span class="material-symbols-outlined">home</span></a></li>
+            <li class="mobile-only"><a href="/quests">Quests<span class="material-symbols-outlined">trophy</span></a></li>
+            <li class="mobile-only"><a href="/leaders">Leaders<span class="material-symbols-outlined">leaderboard</span></a></li>
+            <li class="mobile-only"><a href="/upload">Upload<span class="material-symbols-outlined">upload</span></a></li>
+            <li class="mobile-only"><a href="/profile">Profile<span class="material-symbols-outlined">person</span></a></li>
+        </ul>
+    </nav>
+</body>
+</html>

@@ -62,4 +62,137 @@ class ProfileController extends AppController {
             'isOwnProfile' => $isOwnProfile
         ]);
     }
+
+    public function edit() {
+        // Check if user is logged in
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit();
+        }
+
+        // Get user data
+        $user = $this->userRepository->getUserByUsername($_SESSION['username']);
+        $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
+
+        return $this->render('profile_edit', [
+            'user' => $user,
+            'stats' => $userStats
+        ]);
+    }
+
+    public function update() {
+        // Check if user is logged in
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username = $_POST['username'] ?? '';
+            $email = $_POST['email'] ?? '';
+            $profilePhoto = $_POST['profile_photo'] ?? '';
+            $currentPassword = $_POST['current_password'] ?? '';
+            $newPassword = $_POST['new_password'] ?? '';
+            $confirmPassword = $_POST['confirm_password'] ?? '';
+
+            // Validation
+            if (empty($username) || empty($email)) {
+                $user = $this->userRepository->getUserByUsername($_SESSION['username']);
+                $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
+                return $this->render('profile_edit', [
+                    'user' => $user,
+                    'stats' => $userStats,
+                    'messages' => 'Username and email are required'
+                ]);
+            }
+
+            // Check password change
+            if (!empty($currentPassword) || !empty($newPassword) || !empty($confirmPassword)) {
+                // All password fields must be filled
+                if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
+                    $user = $this->userRepository->getUserByUsername($_SESSION['username']);
+                    $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
+                    return $this->render('profile_edit', [
+                        'user' => $user,
+                        'stats' => $userStats,
+                        'messages' => 'All password fields are required to change password'
+                    ]);
+                }
+
+                // Check if new passwords match
+                if ($newPassword !== $confirmPassword) {
+                    $user = $this->userRepository->getUserByUsername($_SESSION['username']);
+                    $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
+                    return $this->render('profile_edit', [
+                        'user' => $user,
+                        'stats' => $userStats,
+                        'messages' => 'New passwords do not match'
+                    ]);
+                }
+
+                // Check password length
+                if (strlen($newPassword) < 6) {
+                    $user = $this->userRepository->getUserByUsername($_SESSION['username']);
+                    $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
+                    return $this->render('profile_edit', [
+                        'user' => $user,
+                        'stats' => $userStats,
+                        'messages' => 'New password must be at least 6 characters long'
+                    ]);
+                }
+
+                // Verify current password
+                $user = $this->userRepository->getUserByUsername($_SESSION['username']);
+                if (!password_verify($currentPassword, $user['password'])) {
+                    $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
+                    return $this->render('profile_edit', [
+                        'user' => $user,
+                        'stats' => $userStats,
+                        'messages' => 'Current password is incorrect'
+                    ]);
+                }
+
+                // Update password
+                $this->userRepository->updatePassword($_SESSION['user_id'], $newPassword);
+            }
+
+            // Check if username is taken by another user
+            $existingUser = $this->userRepository->getUserByUsername($username);
+            if ($existingUser && $existingUser['id'] != $_SESSION['user_id']) {
+                $user = $this->userRepository->getUserByUsername($_SESSION['username']);
+                $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
+                return $this->render('profile_edit', [
+                    'user' => $user,
+                    'stats' => $userStats,
+                    'messages' => 'Username is already taken'
+                ]);
+            }
+
+            // Check if email is taken by another user
+            $existingEmail = $this->userRepository->getUserByEmail($email);
+            if ($existingEmail && $existingEmail['id'] != $_SESSION['user_id']) {
+                $user = $this->userRepository->getUserByUsername($_SESSION['username']);
+                $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
+                return $this->render('profile_edit', [
+                    'user' => $user,
+                    'stats' => $userStats,
+                    'messages' => 'Email is already taken'
+                ]);
+            }
+
+            // Update user data
+            $this->userRepository->updateUser($_SESSION['user_id'], $username, $email, $profilePhoto);
+
+            // Update session username
+            $_SESSION['username'] = $username;
+            $_SESSION['email'] = $email;
+
+            // Redirect to profile
+            header('Location: /profile');
+            exit();
+        }
+
+        header('Location: /profile/edit');
+        exit();
+    }
 }

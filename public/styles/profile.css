@@ -148,3 +148,163 @@
     font-weight: bold;
     color: var(--VibrantOrange);
 }
+
+/* Edit Profile Styles */
+.edit-profile-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--BackgroundSecondary);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.edit-profile-container h1 {
+    color: var(--VibrantOrange);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.edit-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: var(--TextPrimary);
+    font-weight: 600;
+}
+
+.form-group input {
+    padding: 0.75rem;
+    border: 2px solid var(--LightGray);
+    border-radius: 5px;
+    background: var(--Background);
+    color: var(--TextPrimary);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--VibrantOrange);
+}
+
+.form-group small {
+    color: var(--LightGray);
+    font-size: 0.85rem;
+}
+
+.profile-photo-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--Background);
+    border-radius: 8px;
+}
+
+.profile-photo-preview label {
+    color: var(--TextPrimary);
+    font-weight: 600;
+}
+
+.profile-photo-preview img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid var(--VibrantOrange);
+    object-fit: cover;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.btn-save, .btn-cancel {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.btn-save {
+    background: var(--VibrantOrange);
+    color: white;
+}
+
+.btn-save:hover {
+    background: #e66a00;
+    transform: scale(1.05);
+}
+
+.btn-cancel {
+    background: var(--LightGray);
+    color: var(--Background);
+}
+
+.btn-cancel:hover {
+    background: #999;
+    transform: scale(1.05);
+}
+
+.error-message {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff4444;
+    padding: 1rem;
+    border-radius: 5px;
+    border: 2px solid #ff4444;
+    text-align: center;
+}
+
+/* Password Section Styles */
+.password-section {
+    background: var(--Background);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 2px solid var(--LightGray);
+}
+
+.password-section h2 {
+    color: var(--VibrantOrange);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.password-note {
+    color: var(--LightGray);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .edit-profile-container {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-save, .btn-cancel {
+        width: 100%;
+    }
+}
