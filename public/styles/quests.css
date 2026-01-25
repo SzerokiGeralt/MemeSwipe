@@ -1,8 +1,210 @@
 main.scrollable {
     align-content: baseline;
+    padding: 2rem;
 }
 
 div.selection-bar {
     position: sticky;
     top: var(--navbar-height);
+    margin-bottom: 2rem;
+}
+
+/* Selection bar button styling - tak samo jak w leaders */
+.selection-bar .tab-button {
+    transition: all 0.3s ease;
+}
+
+.selection-bar .tab-button.active {
+    background: var(--VibrantOrange);
+    color: var(--White);
+    border-bottom: 3px solid var(--VibrantOrange);
+    transform: scale(1.05);
+}
+
+/* Tab content styling */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content h2 {
+    color: var(--VibrantOrange);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Quests Grid */
+.quests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.quest-item {
+    background: var(--BackgroundSecondary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.quest-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.quest-item.completed {
+    border-color: var(--VibrantOrange);
+    background: rgba(255, 115, 0, 0.1);
+}
+
+.quest-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.quest-icon {
+    font-size: 2rem;
+}
+
+.quest-header h3 {
+    margin: 0;
+    color: var(--TextPrimary);
+}
+
+.quest-description {
+    color: var(--LightGray);
+    margin-bottom: 1rem;
+}
+
+.quest-progress {
+    margin-bottom: 1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: var(--Background);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--VibrantOrange);
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    color: var(--TextPrimary);
+    font-weight: 600;
+}
+
+.quest-reward {
+    color: var(--VibrantOrange);
+    font-weight: 600;
+    text-align: center;
+    padding: 0.5rem;
+    background: var(--Background);
+    border-radius: 5px;
+}
+
+/* Store Grid */
+.store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.store-item {
+    background: var(--BackgroundSecondary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.store-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.store-item img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1rem;
+}
+
+.store-item h3 {
+    color: var(--TextPrimary);
+    margin-bottom: 0.5rem;
+}
+
+.store-item p {
+    color: var(--LightGray);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.item-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--VibrantOrange);
+}
+
+.buy-btn {
+    background: var(--VibrantOrange);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.buy-btn:hover {
+    background: #e66a00;
+    transform: scale(1.05);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    main.scrollable {
+        padding: 1rem;
+    }
+
+    .quests-grid,
+    .store-grid {
+        grid-template-columns: 1fr;
+    }
 }

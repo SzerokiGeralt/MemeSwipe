@@ -11,9 +11,11 @@
 <body>
     <nav class="top desktop-only anchor">
         <ul class="left">
-            <li>Lvl 12 <meter id="disk_d" value="0.6"></meter> </li>
-            <li>1,250 💎</li>
-            <li>5 🔥</li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['experience'] ?? 0) / 100; ?>"></meter></li>
+            <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+        <?php endif; ?>
         </ul>
         <ul class="right">
             <li><a href="/dashboard">Swipe<span class="material-symbols-outlined">home</span></a></li>
@@ -25,65 +27,165 @@
     </nav>
     <nav class="top mobile-only anchor">
         <ul>
-            <li>Lvl 12 <meter id="disk_d" value="0.6"></meter> </li>
-            <li>1,250 💎</li>
-            <li>5 🔥</li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['experience'] ?? 0) / 100; ?>"></meter></li>
+            <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+        <?php endif; ?>
         </ul>
     </nav>
     <main class="scrollable">
         <div class="selection-bar">
-            <button>Quests</button>
-            <button>Store</button>
-        </div> 
-        <h1>Quests Page</h1>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
-        <p>This is a quests page.</p>
+            <button class="tab-button active" data-tab="quests">Quests</button>
+            <button class="tab-button" data-tab="store">Store</button>
+        </div>
+        
+        <div class="tab-content quests active">
+            <h2>Weekly Quests</h2>
+            <div class="quests-grid">
+                <div class="quest-item">
+                    <div class="quest-header">
+                        <span class="quest-icon">📸</span>
+                        <h3>Upload 3 Memes</h3>
+                    </div>
+                    <p class="quest-description">Upload 3 memes today to earn rewards</p>
+                    <div class="quest-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 66%;"></div>
+                        </div>
+                        <span class="progress-text">2/3</span>
+                    </div>
+                    <div class="quest-reward">
+                        <span>Reward: 50 💎 + 100 XP</span>
+                    </div>
+                </div>
+
+                <div class="quest-item">
+                    <div class="quest-header">
+                        <span class="quest-icon">👍</span>
+                        <h3>Get 50 Upvotes</h3>
+                    </div>
+                    <p class="quest-description">Collect 50 upvotes on your posts</p>
+                    <div class="quest-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%;"></div>
+                        </div>
+                        <span class="progress-text">20/50</span>
+                    </div>
+                    <div class="quest-reward">
+                        <span>Reward: 75 💎 + 150 XP</span>
+                    </div>
+                </div>
+
+                <div class="quest-item">
+                    <div class="quest-header">
+                        <span class="quest-icon">🔥</span>
+                        <h3>Maintain 7-Day Streak</h3>
+                    </div>
+                    <p class="quest-description">Log in for 7 consecutive days</p>
+                    <div class="quest-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 71%;"></div>
+                        </div>
+                        <span class="progress-text">5/7</span>
+                    </div>
+                    <div class="quest-reward">
+                        <span>Reward: 200 💎 + 500 XP</span>
+                    </div>
+                </div>
+
+                <div class="quest-item completed">
+                    <div class="quest-header">
+                        <span class="quest-icon">💬</span>
+                        <h3>Vote on 10 Memes</h3>
+                    </div>
+                    <p class="quest-description">Vote on 10 different memes</p>
+                    <div class="quest-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%;"></div>
+                        </div>
+                        <span class="progress-text">10/10</span>
+                    </div>
+                    <div class="quest-reward">
+                        <span>✓ Completed! Claimed: 30 💎 + 75 XP</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content store">
+            <h2>Diamond Store</h2>
+            <div class="store-grid">
+                <div class="store-item">
+                    <img src="https://api.iconify.design/noto/fire.svg" alt="Streak Saver">
+                    <h3>Streak Saver</h3>
+                    <p>Protect your streak for 1 day if you forget to log in</p>
+                    <div class="item-price">
+                        <span class="price">500 💎</span>
+                        <button class="buy-btn">Buy</button>
+                    </div>
+                </div>
+
+                <div class="store-item">
+                    <img src="https://api.iconify.design/noto/rocket.svg" alt="XP Boost">
+                    <h3>XP Boost (24h)</h3>
+                    <p>Double XP gain for 24 hours</p>
+                    <div class="item-price">
+                        <span class="price">300 💎</span>
+                        <button class="buy-btn">Buy</button>
+                    </div>
+                </div>
+
+                <div class="store-item">
+                    <img src="https://api.iconify.design/noto/glowing-star.svg" alt="Profile Frame">
+                    <h3>Golden Profile Frame</h3>
+                    <p>Special golden frame for your profile picture</p>
+                    <div class="item-price">
+                        <span class="price">1000 💎</span>
+                        <button class="buy-btn">Buy</button>
+                    </div>
+                </div>
+
+                <div class="store-item">
+                    <img src="https://api.iconify.design/noto/package.svg" alt="Loot Box">
+                    <h3>Mystery Box</h3>
+                    <p>Random rewards: XP, diamonds, or special badges</p>
+                    <div class="item-price">
+                        <span class="price">200 💎</span>
+                        <button class="buy-btn">Buy</button>
+                    </div>
+                </div>
+
+                <div class="store-item">
+                    <img src="https://api.iconify.design/noto/crown.svg" alt="Premium Badge">
+                    <h3>VIP Badge</h3>
+                    <p>Exclusive VIP badge shown on your profile</p>
+                    <div class="item-price">
+                        <span class="price">2000 💎</span>
+                        <button class="buy-btn">Buy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const tabButtons = document.querySelectorAll('.tab-button');
+                const tabContents = document.querySelectorAll('.tab-content');
+                
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const targetTab = this.getAttribute('data-tab');
+                        
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        tabContents.forEach(content => content.classList.remove('active'));
+                        
+                        this.classList.add('active');
+                        document.querySelector('.tab-content.' + targetTab).classList.add('active');
+                    });
+                });
+            });
+        </script>
     </main>
         <nav class="bottom mobile-only anchor">
         <ul>
