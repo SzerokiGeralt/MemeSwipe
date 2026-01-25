@@ -26,6 +26,7 @@
     font-size: 1.1rem;
 }
 
+
 /* Selection bar button styling */
 .selection-bar .tab-button {
     transition: all 0.3s ease;
@@ -47,4 +48,103 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Badges grid styling */
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.badge-item {
+    text-align: center;
+    background: var(--Background);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.badge-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.badge-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+}
+
+/* Posts grid styling */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.post-item {
+    background: var(--Background);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.post-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.post-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.post-item p {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--TextPrimary);
+    text-align: center;
+}
+
+/* Stats grid styling */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+    justify-items: center;
+}
+
+.stats-item {
+    background: var(--Background);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stats-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.stats-item p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    color: var(--TextPrimary);
+}
+
+.stats-item p span {
+    font-weight: bold;
+    color: var(--VibrantOrange);
 }

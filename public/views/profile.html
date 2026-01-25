@@ -54,17 +54,37 @@
                 <button class="tab-button" data-tab="collection">Collection</button>
             </div>    
             <div class="tab-content stats active">
-                <p>Longest streak: <?php echo $stats['longest_streak'] ?? 0; ?></p>
-                <p>Posts: <?php echo $stats['posts_count'] ?? 0; ?></p>
-                <p>Experience: <?php echo $stats['experience'] ?? 0; ?> XP</p>
+                <div class="stats-grid">
+                    <p class="stats-item">Longest streak: <?php echo $stats['longest_streak'] ?? 0; ?></p>
+                    <p class="stats-item">Posts: <?php echo $stats['posts_count'] ?? 0; ?></p>
+                    <p class="stats-item">Experience: <?php echo $stats['experience'] ?? 0; ?> XP</p>
+                </div>
             </div>
             <div class="tab-content badges">
-                <p>Achievement badges will be displayed here</p>
-                <p>Coming soon...</p>
+                <?php if (!empty($badges)): ?>
+                    <div class="badges-grid">
+                        <?php foreach ($badges as $badge): ?>
+                            <div class="badge-item">
+                                <p><?php echo htmlspecialchars($badge['name']); ?></p>
+                                <img src="<?php echo htmlspecialchars($badge['icon']); ?>" alt="Badge Icon">
+                                <p><?php echo htmlspecialchars($badge['description']); ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
             <div class="tab-content collection">
-                <p>Your uploaded memes will be displayed here</p>
-                <p>Coming soon...</p>
+                <?php if (!empty($posts)): ?>
+                    <div class="posts-grid">
+                        <?php foreach ($posts as $post): ?>
+                            <div class="post-item">
+                                <img src="<?php echo htmlspecialchars($post['image']); ?>" alt="Meme Image">
+                                <p><?php echo htmlspecialchars("Upvotes : ".$post['upvotes']); ?></p>
+                                <p><?php echo htmlspecialchars("Downvotes : ".$post['downvotes']); ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
             
             <script>

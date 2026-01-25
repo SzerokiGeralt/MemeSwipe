@@ -15,7 +15,7 @@
         <ul class="left">
         <?php if (isset($_SESSION['user_id'])): ?>
             <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($user['experience'] ?? 0) / 100; ?>"></meter></li>
-            <li><?php echo number_format($stats['gems'] ?? 0); ?> 💎</li>
+            <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
             <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
         <?php endif; ?>
         </ul>

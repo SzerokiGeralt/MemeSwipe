@@ -36,6 +36,41 @@ class UserRepository extends Repository {
         return $user;
     }
 
+    public function getUserById(int $userId) {
+        $query = $this->database->connect()->prepare('
+            SELECT * FROM user_stats WHERE user_id = :userId
+        ');
+        $query->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $query->execute();
+        $userStats = $query->fetch(PDO::FETCH_ASSOC);
+        $query = null;
+        return $userStats;
+    }
+
+    public function getUserBadges(int $userId) {
+        $query = $this->database->connect()->prepare('
+            SELECT b.* FROM badges b
+            JOIN users_badges ub ON b.id = ub.badge_id
+            WHERE ub.user_id = :userId
+        ');
+        $query->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $query->execute();
+        $badges = $query->fetchAll(PDO::FETCH_ASSOC);
+        $query = null;
+        return $badges;
+    }
+
+    public function getUserPosts(int $userId) {
+        $query = $this->database->connect()->prepare('
+            SELECT * FROM posts WHERE user_id = :userId
+        ');
+        $query->bindParam(':userId', $userId);
+        $query->execute();
+        $posts = $query->fetchAll(PDO::FETCH_ASSOC);
+        $query = null;
+        return $posts;
+    }
+
     public function createUser(
         string $username, 
         string $email, 

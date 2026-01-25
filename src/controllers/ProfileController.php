@@ -42,12 +42,18 @@ class ProfileController extends AppController {
             $userStats = $this->userStatsRepository->createStatsForUser($user['id']);
         }
 
+        $userPosts = $this->userRepository->getUserPosts($user['id']);
+
+        $userBadges = $this->userRepository->getUserBadges($user['id']);
+
         // Check if viewing own profile
         $isOwnProfile = isset($_SESSION['user_id']) && $_SESSION['user_id'] == $user['id'];
 
         return $this->render('profile', [
             'user' => $user,
             'stats' => $userStats,
+            'posts' => $userPosts,
+            'badges' => $userBadges,
             'isOwnProfile' => $isOwnProfile
         ]);
     }
