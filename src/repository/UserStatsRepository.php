@@ -3,6 +3,17 @@
 require_once 'Repository.php';
 
 class UserStatsRepository extends Repository {
+
+    public function updateLastActiveDate(int $userId) {
+        $date = date('Y-m-d H:i:s');
+        $query = $this->database->connect()->prepare('
+            UPDATE user_stats SET last_active_date = :date WHERE user_id = :user_id
+        ');
+        $query->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindParam(':date', $date, PDO::PARAM_STR);
+        $query->execute();
+        $query = null;
+    }
     
     public function getStatsByUserId(int $userId) {
         $query = $this->database->connect()->prepare('

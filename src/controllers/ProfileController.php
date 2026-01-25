@@ -41,6 +41,11 @@ class ProfileController extends AppController {
         if (!$userStats) {
             $userStats = $this->userStatsRepository->createStatsForUser($user['id']);
         }
+        
+        // Update last active date if viewing own profile
+        if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $user['id']) {
+            $this->userStatsRepository->updateLastActiveDate($user['id']);
+        }
 
         $userPosts = $this->userRepository->getUserPosts($user['id']);
 

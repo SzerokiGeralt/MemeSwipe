@@ -3,13 +3,16 @@
 
 require_once 'AppController.php';
 require_once __DIR__ . '/../repository/UserRepository.php';
+require_once __DIR__ . '/../repository/UserStatsRepository.php';
 
 class SecurityController extends AppController {
 
     private $userRepository;
+    private $userStatsRepository;
     
     public function __construct() {
         $this->userRepository = new UserRepository();
+        $this->userStatsRepository = new UserStatsRepository();
     }
 
 
@@ -37,6 +40,9 @@ class SecurityController extends AppController {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
+            
+            // Update last active date
+            $this->userStatsRepository->updateLastActiveDate($user['id']);
             
             $url = "http://$_SERVER[HTTP_HOST]";
             header("Location: {$url}/dashboard");
