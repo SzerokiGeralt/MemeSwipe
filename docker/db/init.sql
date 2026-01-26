@@ -17,6 +17,44 @@ CREATE TABLE badges (
     icon VARCHAR(255) NOT NULL
 );
 
+-- Quest table
+CREATE TABLE quests (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    icon VARCHAR(255) NOT NULL,
+    count INTEGER NOT NULL,
+    reward INTEGER NOT NULL,
+    action_type VARCHAR(50) DEFAULT 'generic'
+);
+
+CREATE TABLE user_quests (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    quest_id INTEGER NOT NULL REFERENCES quests(id) ON DELETE CASCADE,
+    progress INTEGER DEFAULT 0,
+    completed BOOLEAN DEFAULT FALSE,
+    expiration_date TIMESTAMP,
+    UNIQUE(user_id, quest_id)
+);
+
+-- Powerup table
+CREATE TABLE items (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    icon VARCHAR(255) NOT NULL,
+    cost INTEGER NOT NULL,
+    max_quantity INTEGER NOT NULL
+);
+
+CREATE TABLE user_items (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    item_id INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,
+    UNIQUE(user_id, item_id)
+);
+
 -- Posts table
 CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
@@ -49,6 +87,8 @@ CREATE TABLE users_badges (
     UNIQUE(user_id, badge_id)
 );
 
+
+
 -- User votes table (prevents double voting)
 CREATE TABLE user_votes (
     id SERIAL PRIMARY KEY,
@@ -75,8 +115,7 @@ INSERT INTO badges (name, description, icon) VALUES
 ('Viral', 'Get 1000 upvotes on a single post', 'https://api.iconify.design/noto/dizzy.svg'),
 ('Consistent', 'Upload 50 posts', 'https://api.iconify.design/noto/chart-increasing.svg'),
 ('Diamond Collector', 'Earn 1000 diamonds', 'https://api.iconify.design/noto/gem-stone.svg'),
-('Level 10', 'Reach level 10', 'https://api.iconify.design/noto/trophy.svg'),
-('Taste Maker', 'Achieve 90% taste index', 'https://api.iconify.design/noto/crown.svg');
+('Level 10', 'Reach level 10', 'https://api.iconify.design/noto/trophy.svg');
 
 -- Seed user_stats
 INSERT INTO user_stats (user_id, level, experience, diamonds, streak, longest_streak, posts_count) VALUES
@@ -105,7 +144,7 @@ INSERT INTO users_badges (user_id, badge_id) VALUES
 (2, 1), (2, 5),
 (3, 1), (3, 2), (3, 3), (3, 5),
 (4, 1),
-(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6), (5, 7);
+(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6);
 
 -- Seed user_votes (sample votes from users on different posts)
 INSERT INTO user_votes (user_id, post_id, vote_type) VALUES
@@ -119,3 +158,32 @@ INSERT INTO user_votes (user_id, post_id, vote_type) VALUES
 (4, 1, 'downvote'), (4, 3, 'upvote'), (4, 4, 'upvote'), (4, 5, 'upvote'),
 -- User 5 votes
 (5, 1, 'upvote'), (5, 2, 'upvote'), (5, 3, 'upvote'), (5, 4, 'upvote');
+
+INSERT INTO quests (name, description, icon, count, reward, action_type) VALUES
+('Uploader', 'Upload 3 new memes', 'https://api.iconify.design/noto/party-popper.svg', 3, 100, 'upload'),
+('Uploader', 'Upload 5 new memes', 'https://api.iconify.design/noto/camera.svg', 5, 300, 'upload'),
+('Upvote Collector', 'Receive a total of 10 upvotes.', 'https://api.iconify.design/noto/star.svg', 10, 100, 'upvote'),
+('Upvote Collector', 'Receive a total of 50 upvotes.', 'https://api.iconify.design/noto/star.svg', 50, 500, 'upvote'),
+('Upvote Collector', 'Receive a total of 100 upvotes.', 'https://api.iconify.design/noto/star.svg', 100, 1000, 'upvote'),
+('Daily Streak', 'Maintain a 5-day activity streak.', 'https://api.iconify.design/noto/fire.svg', 5, 200, 'streak'),
+('Daily Streak', 'Maintain a 3-day activity streak.', 'https://api.iconify.design/noto/fire.svg', 3, 400, 'streak'),
+('Vote on memes', 'Vote on 10 different memes', 'https://api.iconify.design/noto/rocket.svg', 10, 400, 'vote'),
+('Vote on memes', 'Vote on 30 different memes', 'https://api.iconify.design/noto/rocket.svg', 30, 1200, 'vote'),
+('Vote on memes', 'Vote on 50 different memes', 'https://api.iconify.design/noto/rocket.svg', 50, 2000, 'vote'),
+('Vote on memes', 'Vote on 100 different memes', 'https://api.iconify.design/noto/rocket.svg', 100, 1000, 'vote');
+
+INSERT INTO items (name, description, icon, cost, max_quantity) VALUES
+-- instant levelup
+('Instant Level Up', 'Instantly gain one level.', 'https://api.iconify.design/noto/up-arrow.svg', 500, 5),
+-- instant streakup
+('Streak Booster', 'Increase your current streak by 1 day.', 'https://api.iconify.design/noto/calendar.svg', 300, 5),
+-- mystery box
+('Mystery Box', 'Contains random rewards like diamonds or experience.', 'https://api.iconify.design/noto/gift.svg', 700, 3),
+-- special avatar frame
+('Avatar Frame', 'A special frame for your profile picture.', 'https://api.iconify.design/noto/frame-photo.svg', 1000, 1),
+-- VIP badge
+('VIP Badge', 'A special badge displayed on your profile.', 'https://api.iconify.design/noto/badge.svg', 1500, 1),
+-- golden page 
+('Golden Page', 'Gives your profile a golden theme.', 'https://api.iconify.design/noto/page-with-curl.svg', 2000, 1),
+-- 8h cooldown
+('Cooldown Reducer', 'Reduces post upload cooldown to 8 hours.', 'https://api.iconify.design/noto/stopwatch.svg', 10000, 2);
