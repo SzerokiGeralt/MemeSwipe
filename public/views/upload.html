@@ -11,9 +11,11 @@
 <body>
     <nav class="top desktop-only anchor">
         <ul class="left">
-            <li>Lvl 12 <meter id="disk_d" value="0.6"></meter> </li>
-            <li>1,250 💎</li>
-            <li>5 🔥</li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
+            <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
+        <?php endif; ?>
         </ul>
         <ul class="right">
             <li><a href="/dashboard">Swipe<span class="material-symbols-outlined">home</span></a></li>
@@ -25,21 +27,238 @@
     </nav>
     <nav class="top mobile-only anchor">
         <ul>
-            <li>Lvl 12 <meter id="disk_d" value="0.6"></meter> </li>
-            <li>1,250 💎</li>
-            <li>5 🔥</li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
+            <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
+        <?php endif; ?>
         </ul>
     </nav>
     <main class="scrollable">
-        <div>
-            <p>Next upload available in:</p>
-            <h1>00:15:23</h1>
-            <div class="dotted-border">
-                <h3>Upload file</h3>
-                <p>Max file size: 10MB</p>
-                <button class="upload-button">Upload File</button>
+        <div class="upload-container">
+            <?php if ($cooldown['can_upload'] ?? false): ?>
+                <div class="upload-ready">
+                    <div class="upload-status">
+                        <span class="status-icon">✅</span>
+                        <h2>Ready to Upload!</h2>
+                        <?php if ($cooldown['has_reducer'] ?? false): ?>
+                            <p class="reducer-badge">⏰ Cooldown Reducer Active (8h)</p>
+                        <?php endif; ?>
+                    </div>
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="dotted-border" id="dropZone">
+                            <h3>Upload your meme</h3>
+                            <p>Max file size: 10MB</p>
+                            <p>Formats: JPEG, PNG, GIF, WebP</p>
+                            <input type="file" id="imageInput" name="image" accept="image/jpeg,image/png,image/gif,image/webp" hidden>
+                            <button type="button" class="upload-button" id="selectFileBtn">Select File</button>
+                            <div id="previewContainer" class="preview-container" style="display: none;">
+                                <img id="imagePreview" src="" alt="Preview">
+                                <button type="button" id="removePreview" class="remove-preview">✕</button>
+                            </div>
+                        </div>
+                        <button type="submit" id="submitBtn" class="submit-button" disabled>Upload Meme</button>
+                    </form>
+                </div>
+            <?php else: ?>
+                <div class="upload-cooldown">
+                    <div class="cooldown-status">
+                        <span class="status-icon">⏳</span>
+                        <p>Next upload available in:</p>
+                        <h1 id="cooldownTimer">
+                            <?php 
+                                $hours = str_pad($cooldown['hours'] ?? 0, 2, '0', STR_PAD_LEFT);
+                                $minutes = str_pad($cooldown['minutes'] ?? 0, 2, '0', STR_PAD_LEFT);
+                                $seconds = str_pad($cooldown['seconds'] ?? 0, 2, '0', STR_PAD_LEFT);
+                                echo "{$hours}:{$minutes}:{$seconds}";
+                            ?>
+                        </h1>
+                        <?php if (!($cooldown['has_reducer'] ?? false)): ?>
+                            <p class="reducer-hint">💡 Tip: Buy the Cooldown Reducer in the store to reduce wait time to 8 hours!</p>
+                        <?php else: ?>
+                            <p class="reducer-badge">⏰ Cooldown Reducer Active (8h cooldown)</p>
+                        <?php endif; ?>
+                    </div>
+                    <div class="dotted-border disabled">
+                        <h3>Upload file</h3>
+                        <p>Max file size: 10MB</p>
+                        <button class="upload-button" disabled>Upload File</button>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+        
+        <!-- Upload Success Popup -->
+        <div id="uploadPopup" class="popup-overlay">
+            <div class="popup-content">
+                <div class="popup-icon" id="popupIcon">🎉</div>
+                <h2 id="popupTitle">Upload Successful!</h2>
+                <p id="popupMessage">Your meme has been uploaded!</p>
+                <button id="popupClose" class="popup-btn">OK</button>
             </div>
         </div>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Cooldown timer
+                <?php if (!($cooldown['can_upload'] ?? true)): ?>
+                let totalSeconds = <?php echo $cooldown['time_remaining'] ?? 0; ?>;
+                const timerElement = document.getElementById('cooldownTimer');
+                
+                function updateTimer() {
+                    if (totalSeconds <= 0) {
+                        location.reload();
+                        return;
+                    }
+                    
+                    const hours = Math.floor(totalSeconds / 3600);
+                    const minutes = Math.floor((totalSeconds % 3600) / 60);
+                    const seconds = totalSeconds % 60;
+                    
+                    timerElement.textContent = 
+                        String(hours).padStart(2, '0') + ':' + 
+                        String(minutes).padStart(2, '0') + ':' + 
+                        String(seconds).padStart(2, '0');
+                    
+                    totalSeconds--;
+                }
+                
+                setInterval(updateTimer, 1000);
+                <?php endif; ?>
+                
+                // Upload form handling
+                <?php if ($cooldown['can_upload'] ?? false): ?>
+                const uploadForm = document.getElementById('uploadForm');
+                const imageInput = document.getElementById('imageInput');
+                const selectFileBtn = document.getElementById('selectFileBtn');
+                const submitBtn = document.getElementById('submitBtn');
+                const dropZone = document.getElementById('dropZone');
+                const previewContainer = document.getElementById('previewContainer');
+                const imagePreview = document.getElementById('imagePreview');
+                const removePreview = document.getElementById('removePreview');
+                const popup = document.getElementById('uploadPopup');
+                const popupIcon = document.getElementById('popupIcon');
+                const popupTitle = document.getElementById('popupTitle');
+                const popupMessage = document.getElementById('popupMessage');
+                const popupClose = document.getElementById('popupClose');
+                
+                selectFileBtn.addEventListener('click', () => imageInput.click());
+                
+                // Drag and drop
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('drag-over');
+                });
+                
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('drag-over');
+                });
+                
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('drag-over');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        imageInput.files = files;
+                        handleFileSelect(files[0]);
+                    }
+                });
+                
+                imageInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        handleFileSelect(e.target.files[0]);
+                    }
+                });
+                
+                function handleFileSelect(file) {
+                    // Validate file type
+                    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                        showPopup('❌', 'Invalid File', 'Please select a JPEG, PNG, GIF, or WebP image.');
+                        return;
+                    }
+                    
+                    // Validate file size (10MB)
+                    if (file.size > 10 * 1024 * 1024) {
+                        showPopup('❌', 'File Too Large', 'Maximum file size is 10MB.');
+                        return;
+                    }
+                    
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        imagePreview.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                        selectFileBtn.style.display = 'none';
+                        submitBtn.disabled = false;
+                    };
+                    reader.readAsDataURL(file);
+                }
+                
+                removePreview.addEventListener('click', () => {
+                    imageInput.value = '';
+                    previewContainer.style.display = 'none';
+                    selectFileBtn.style.display = 'inline-block';
+                    submitBtn.disabled = true;
+                });
+                
+                uploadForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    if (!imageInput.files.length) {
+                        showPopup('❌', 'No File Selected', 'Please select an image to upload.');
+                        return;
+                    }
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Uploading...';
+                    
+                    const formData = new FormData();
+                    formData.append('image', imageInput.files[0]);
+                    
+                    try {
+                        const response = await fetch('/upload/submit', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            let message = data.message;
+                            if (data.quests_completed) {
+                                message += ` Quest bonus: +${data.quest_reward} 💎`;
+                            }
+                            showPopup('🎉', 'Upload Successful!', message);
+                            
+                            setTimeout(() => location.reload(), 2500);
+                        } else {
+                            showPopup('❌', 'Upload Failed', data.message);
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = 'Upload Meme';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showPopup('❌', 'Error', 'Something went wrong. Please try again.');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Upload Meme';
+                    }
+                });
+                
+                function showPopup(icon, title, message) {
+                    popupIcon.textContent = icon;
+                    popupTitle.textContent = title;
+                    popupMessage.textContent = message;
+                    popup.classList.add('show');
+                }
+                
+                popupClose.addEventListener('click', () => popup.classList.remove('show'));
+                popup.addEventListener('click', (e) => {
+                    if (e.target === popup) popup.classList.remove('show');
+                });
+                <?php endif; ?>
+            });
+        </script>
     </main>
         <nav class="bottom mobile-only anchor">
         <ul>

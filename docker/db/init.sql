@@ -75,7 +75,8 @@ CREATE TABLE user_stats (
     streak INTEGER DEFAULT 0,
     longest_streak INTEGER DEFAULT 0,
     posts_count INTEGER DEFAULT 0,
-    last_active_date DATE DEFAULT CURRENT_DATE
+    last_active_date DATE DEFAULT CURRENT_DATE,
+    last_upload_date DATE DEFAULT CURRENT_DATE
 );
 
 -- Users badges junction table
@@ -115,15 +116,38 @@ INSERT INTO badges (name, description, icon) VALUES
 ('Viral', 'Get 1000 upvotes on a single post', 'https://api.iconify.design/noto/dizzy.svg'),
 ('Consistent', 'Upload 50 posts', 'https://api.iconify.design/noto/chart-increasing.svg'),
 ('Diamond Collector', 'Earn 1000 diamonds', 'https://api.iconify.design/noto/gem-stone.svg'),
-('Level 10', 'Reach level 10', 'https://api.iconify.design/noto/trophy.svg');
+('Level 10', 'Reach level 10', 'https://api.iconify.design/noto/trophy.svg'),
+('VIP', 'A special badge for VIP members', 'https://api.iconify.design/noto/crown.svg');
 
 -- Seed user_stats
 INSERT INTO user_stats (user_id, level, experience, diamonds, streak, longest_streak, posts_count) VALUES
-(1, 12, 2400, 1250, 5, 14, 45),
-(2, 8, 1500, 800, 3, 8, 28),
-(3, 15, 3200, 2100, 10, 15, 67),
-(4, 5, 850, 420, 2, 5, 15),
-(5, 20, 5000, 3500, 7, 20, 92);
+(1, 12, 15400, 1250, 5, 14, 45),
+(2, 8, 4900, 800, 3, 8, 28),
+(3, 15, 24800, 2100, 10, 15, 67),
+(4, 5, 1500, 420, 2, 5, 15),
+(5, 20, 57000, 3500, 7, 20, 92);
+
+-- Seed items BEFORE user_items (foreign key constraint)
+INSERT INTO items (name, description, icon, cost, max_quantity) VALUES
+-- instant levelup (infinite)
+('Instant Level Up', 'Instantly gain one level.', 'https://api.iconify.design/noto/up-arrow.svg', 500, 0),
+-- instant streakup (infinite)
+('Streak Booster', 'Increase your current streak by 1 day.', 'https://api.iconify.design/noto/calendar.svg', 300, 0),
+-- mystery box (infinite)
+('Mystery Box', 'Contains random rewards like diamonds or experience.', 'https://api.iconify.design/noto/wrapped-gift.svg', 700, 0),
+-- special avatar frame (limited - add to inventory)
+('Avatar Frame', 'A special frame for your profile picture.', 'https://api.iconify.design/noto/framed-picture.svg', 1000, 1),
+-- VIP badge (limited - add to inventory)
+('VIP Badge', 'A special badge displayed on your profile.', 'https://api.iconify.design/noto/crown.svg', 1500, 1),
+-- golden page (limited - add to inventory)
+('Golden Page', 'Gives your profile a golden theme.', 'https://api.iconify.design/noto/page-with-curl.svg', 2000, 1),
+-- 8h cooldown (limited - add to inventory)
+('Cooldown Reducer', 'Reduces post upload cooldown to 8 hours.', 'https://api.iconify.design/noto/stopwatch.svg', 10000, 1);
+
+-- Seed user_items (VIP items for some users)
+INSERT INTO user_items (user_id, item_id) VALUES
+(3, 4), (3, 5), (3, 6),  -- KarynaPL has Avatar Frame, VIP Badge, Golden Page
+(5, 4), (5, 5), (5, 6);  -- ProGamer99 has Avatar Frame, VIP Badge, Golden Page
 
 -- Seed posts
 INSERT INTO posts (user_id, image, upvotes, downvotes) VALUES
@@ -171,19 +195,3 @@ INSERT INTO quests (name, description, icon, count, reward, action_type) VALUES
 ('Vote on memes', 'Vote on 30 different memes', 'https://api.iconify.design/noto/rocket.svg', 30, 1200, 'vote'),
 ('Vote on memes', 'Vote on 50 different memes', 'https://api.iconify.design/noto/rocket.svg', 50, 2000, 'vote'),
 ('Vote on memes', 'Vote on 100 different memes', 'https://api.iconify.design/noto/rocket.svg', 100, 1000, 'vote');
-
-INSERT INTO items (name, description, icon, cost, max_quantity) VALUES
--- instant levelup
-('Instant Level Up', 'Instantly gain one level.', 'https://api.iconify.design/noto/up-arrow.svg', 500, 5),
--- instant streakup
-('Streak Booster', 'Increase your current streak by 1 day.', 'https://api.iconify.design/noto/calendar.svg', 300, 5),
--- mystery box
-('Mystery Box', 'Contains random rewards like diamonds or experience.', 'https://api.iconify.design/noto/gift.svg', 700, 3),
--- special avatar frame
-('Avatar Frame', 'A special frame for your profile picture.', 'https://api.iconify.design/noto/frame-photo.svg', 1000, 1),
--- VIP badge
-('VIP Badge', 'A special badge displayed on your profile.', 'https://api.iconify.design/noto/badge.svg', 1500, 1),
--- golden page 
-('Golden Page', 'Gives your profile a golden theme.', 'https://api.iconify.design/noto/page-with-curl.svg', 2000, 1),
--- 8h cooldown
-('Cooldown Reducer', 'Reduces post upload cooldown to 8 hours.', 'https://api.iconify.design/noto/stopwatch.svg', 10000, 2);

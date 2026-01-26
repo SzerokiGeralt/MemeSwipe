@@ -12,9 +12,9 @@
     <nav class="top desktop-only anchor">
         <ul class="left">
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['experience'] ?? 0) / 100; ?>"></meter></li>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
             <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
-            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
         <?php endif; ?>
         </ul>
         <ul class="right">
@@ -28,9 +28,9 @@
     <nav class="top mobile-only anchor">
         <ul>
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['experience'] ?? 0) / 100; ?>"></meter></li>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
             <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
-            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
         <?php endif; ?>
         </ul>
     </nav>
@@ -41,130 +41,102 @@
         </div>
         
         <div class="tab-content quests active">
-            <h2>Weekly Quests</h2>
+            <div class="quests-header">
+                <h2>Weekly Quests</h2>
+                <div class="reset-timer">
+                    <span class="reset-label">Resets in:</span>
+                    <span id="resetCountdown" class="countdown">
+                        <?php echo ($resetInfo['days'] ?? 0); ?>d <?php echo ($resetInfo['hours'] ?? 0); ?>h <?php echo ($resetInfo['minutes'] ?? 0); ?>m
+                    </span>
+                </div>
+            </div>
             <div class="quests-grid">
-                <div class="quest-item">
-                    <div class="quest-header">
-                        <span class="quest-icon">📸</span>
-                        <h3>Upload 3 Memes</h3>
-                    </div>
-                    <p class="quest-description">Upload 3 memes today to earn rewards</p>
-                    <div class="quest-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 66%;"></div>
+                <?php if (!empty($quests)): ?>
+                    <?php foreach ($quests as $quest): ?>
+                        <?php 
+                            $progress = $quest['progress'] ?? 0;
+                            $count = $quest['count'];
+                            $isCompleted = $quest['completed'] == true || $quest['completed'] == 't';
+                            $progressPercent = min(100, ($progress / $count) * 100);
+                            $canClaim = $progress >= $count && !$isCompleted;
+                        ?>
+                        <div class="quest-item <?php echo $isCompleted ? 'completed' : ($canClaim ? 'claimable' : ''); ?>">
+                            <div class="quest-header">
+                                <img src="<?php echo htmlspecialchars($quest['icon']); ?>" alt="" class="quest-icon-img">
+                                <h3><?php echo htmlspecialchars($quest['name']); ?></h3>
+                            </div>
+                            <p class="quest-description"><?php echo htmlspecialchars($quest['description']); ?></p>
+                            <div class="quest-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: <?php echo $progressPercent; ?>%;"></div>
+                                </div>
+                                <span class="progress-text"><?php echo $progress; ?>/<?php echo $count; ?></span>
+                            </div>
+                            <div class="quest-reward">
+                                <?php if ($isCompleted): ?>
+                                    <span class="claimed">✓ Claimed: <?php echo number_format($quest['reward']); ?> 💎</span>
+                                <?php elseif ($canClaim): ?>
+                                    <button class="claim-btn" data-quest-id="<?php echo $quest['id']; ?>">
+                                        Claim <?php echo number_format($quest['reward']); ?> 💎
+                                    </button>
+                                <?php else: ?>
+                                    <span>Reward: <?php echo number_format($quest['reward']); ?> 💎</span>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                        <span class="progress-text">2/3</span>
-                    </div>
-                    <div class="quest-reward">
-                        <span>Reward: 50 💎 + 100 XP</span>
-                    </div>
-                </div>
-
-                <div class="quest-item">
-                    <div class="quest-header">
-                        <span class="quest-icon">👍</span>
-                        <h3>Get 50 Upvotes</h3>
-                    </div>
-                    <p class="quest-description">Collect 50 upvotes on your posts</p>
-                    <div class="quest-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 40%;"></div>
-                        </div>
-                        <span class="progress-text">20/50</span>
-                    </div>
-                    <div class="quest-reward">
-                        <span>Reward: 75 💎 + 150 XP</span>
-                    </div>
-                </div>
-
-                <div class="quest-item">
-                    <div class="quest-header">
-                        <span class="quest-icon">🔥</span>
-                        <h3>Maintain 7-Day Streak</h3>
-                    </div>
-                    <p class="quest-description">Log in for 7 consecutive days</p>
-                    <div class="quest-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 71%;"></div>
-                        </div>
-                        <span class="progress-text">5/7</span>
-                    </div>
-                    <div class="quest-reward">
-                        <span>Reward: 200 💎 + 500 XP</span>
-                    </div>
-                </div>
-
-                <div class="quest-item completed">
-                    <div class="quest-header">
-                        <span class="quest-icon">💬</span>
-                        <h3>Vote on 10 Memes</h3>
-                    </div>
-                    <p class="quest-description">Vote on 10 different memes</p>
-                    <div class="quest-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 100%;"></div>
-                        </div>
-                        <span class="progress-text">10/10</span>
-                    </div>
-                    <div class="quest-reward">
-                        <span>✓ Completed! Claimed: 30 💎 + 75 XP</span>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="no-quests">No quests available. Check back later!</p>
+                <?php endif; ?>
             </div>
         </div>
 
         <div class="tab-content store">
             <h2>Diamond Store</h2>
             <div class="store-grid">
-                <div class="store-item">
-                    <img src="https://api.iconify.design/noto/fire.svg" alt="Streak Saver">
-                    <h3>Streak Saver</h3>
-                    <p>Protect your streak for 1 day if you forget to log in</p>
-                    <div class="item-price">
-                        <span class="price">500 💎</span>
-                        <button class="buy-btn">Buy</button>
-                    </div>
-                </div>
+                <?php if (!empty($items)): ?>
+                    <?php foreach ($items as $item): ?>
+                        <?php 
+                            // Check if item can be bought infinitely (max_quantity = 0)
+                            $canBuyInfinitely = $item['max_quantity'] == 0;
+                            // Check if user already owns this item
+                            $alreadyOwned = $item['owned_by_user'] == 't' || $item['owned_by_user'] === true;
+                            // Check if user can afford this item
+                            $canAfford = ($stats['diamonds'] ?? 0) >= $item['cost'];
+                            // Disable button if item is limited and already owned OR if user can't afford it
+                            $isOwned = !$canBuyInfinitely && $alreadyOwned;
+                            $isDisabled = $isOwned || !$canAfford;
+                            $itemClass = $isOwned ? 'owned' : (!$canAfford ? 'cannot-afford' : '');
+                        ?>
+                        <div class="store-item <?php echo $itemClass; ?>">
+                            <img src="<?php echo htmlspecialchars($item['icon']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
+                            <h3><?php echo htmlspecialchars($item['name']); ?></h3>
+                            <p><?php echo htmlspecialchars($item['description']); ?></p>
+                            <div class="item-price">
+                                <span class="price"><?php echo number_format($item['cost']); ?> 💎</span>
+                                <?php if ($isOwned): ?>
+                                    <button class="buy-btn" disabled>Owned</button>
+                                <?php elseif (!$canAfford): ?>
+                                    <button class="buy-btn" disabled>Can't Afford</button>
+                                <?php else: ?>
+                                    <button class="buy-btn" data-item-id="<?php echo $item['id']; ?>">Buy</button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No items available at the moment.</p>
+                <?php endif; ?>
+            </div>
+        </div>
 
-                <div class="store-item">
-                    <img src="https://api.iconify.design/noto/rocket.svg" alt="XP Boost">
-                    <h3>XP Boost (24h)</h3>
-                    <p>Double XP gain for 24 hours</p>
-                    <div class="item-price">
-                        <span class="price">300 💎</span>
-                        <button class="buy-btn">Buy</button>
-                    </div>
-                </div>
-
-                <div class="store-item">
-                    <img src="https://api.iconify.design/noto/glowing-star.svg" alt="Profile Frame">
-                    <h3>Golden Profile Frame</h3>
-                    <p>Special golden frame for your profile picture</p>
-                    <div class="item-price">
-                        <span class="price">1000 💎</span>
-                        <button class="buy-btn">Buy</button>
-                    </div>
-                </div>
-
-                <div class="store-item">
-                    <img src="https://api.iconify.design/noto/package.svg" alt="Loot Box">
-                    <h3>Mystery Box</h3>
-                    <p>Random rewards: XP, diamonds, or special badges</p>
-                    <div class="item-price">
-                        <span class="price">200 💎</span>
-                        <button class="buy-btn">Buy</button>
-                    </div>
-                </div>
-
-                <div class="store-item">
-                    <img src="https://api.iconify.design/noto/crown.svg" alt="Premium Badge">
-                    <h3>VIP Badge</h3>
-                    <p>Exclusive VIP badge shown on your profile</p>
-                    <div class="item-price">
-                        <span class="price">2000 💎</span>
-                        <button class="buy-btn">Buy</button>
-                    </div>
-                </div>
+        <!-- Purchase Popup -->
+        <div id="purchasePopup" class="popup-overlay">
+            <div class="popup-content">
+                <div class="popup-icon">🎉</div>
+                <h2 id="popupTitle">Purchase Successful!</h2>
+                <p id="popupMessage">Item purchased successfully!</p>
+                <button id="popupClose" class="popup-btn">OK</button>
             </div>
         </div>
 
@@ -184,6 +156,160 @@
                         document.querySelector('.tab-content.' + targetTab).classList.add('active');
                     });
                 });
+
+                // Quest claim handling
+                const claimButtons = document.querySelectorAll('.claim-btn');
+                const popup = document.getElementById('purchasePopup');
+                const popupTitle = document.getElementById('popupTitle');
+                const popupMessage = document.getElementById('popupMessage');
+                const popupIcon = document.querySelector('.popup-icon');
+                const popupClose = document.getElementById('popupClose');
+                
+                claimButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const questId = this.getAttribute('data-quest-id');
+                        if (!questId) return;
+                        
+                        const btn = this;
+                        btn.disabled = true;
+                        const originalText = btn.textContent;
+                        btn.textContent = 'Claiming...';
+                        
+                        fetch('/quests/claim', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ quest_id: parseInt(questId) })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                popupIcon.textContent = '🎉';
+                                popupTitle.textContent = 'Quest Completed!';
+                                popupMessage.textContent = data.message;
+                                popup.classList.add('show');
+                                
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                popupIcon.textContent = '❌';
+                                popupTitle.textContent = 'Error';
+                                popupMessage.textContent = data.message;
+                                popup.classList.add('show');
+                                
+                                btn.disabled = false;
+                                btn.textContent = originalText;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            popupIcon.textContent = '❌';
+                            popupTitle.textContent = 'Error';
+                            popupMessage.textContent = 'Something went wrong. Please try again.';
+                            popup.classList.add('show');
+                            
+                            btn.disabled = false;
+                            btn.textContent = originalText;
+                        });
+                    });
+                });
+
+                // Purchase handling
+                const buyButtons = document.querySelectorAll('.buy-btn:not([disabled])');
+
+                // Close popup when clicking OK button
+                popupClose.addEventListener('click', function() {
+                    popup.classList.remove('show');
+                });
+
+                // Close popup when clicking outside
+                popup.addEventListener('click', function(e) {
+                    if (e.target === popup) {
+                        popup.classList.remove('show');
+                    }
+                });
+
+                buyButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const itemId = this.getAttribute('data-item-id');
+                        if (!itemId) return;
+
+                        const btn = this;
+                        // Disable button during purchase
+                        btn.disabled = true;
+                        const originalText = btn.textContent;
+                        btn.textContent = 'Processing...';
+
+                        // Send purchase request
+                        fetch('/quests/purchase', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ item_id: parseInt(itemId) })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Show success popup
+                                popupIcon.textContent = '🎉';
+                                popupTitle.textContent = 'Purchase Successful!';
+                                popupMessage.textContent = data.message;
+                                popup.classList.add('show');
+
+                                // Reload page after short delay to update stats and owned items
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                // Show error popup
+                                popupIcon.textContent = '❌';
+                                popupTitle.textContent = 'Purchase Failed';
+                                popupMessage.textContent = data.message;
+                                popup.classList.add('show');
+
+                                // Re-enable button
+                                btn.disabled = false;
+                                btn.textContent = originalText;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            popupIcon.textContent = '❌';
+                            popupTitle.textContent = 'Error';
+                            popupMessage.textContent = 'Something went wrong. Please try again.';
+                            popup.classList.add('show');
+
+                            btn.disabled = false;
+                            btn.textContent = originalText;
+                        });
+                    });
+                });
+                
+                // Reset countdown timer
+                const resetCountdown = document.getElementById('resetCountdown');
+                if (resetCountdown) {
+                    let totalSeconds = <?php echo ($resetInfo['total_seconds'] ?? 0); ?>;
+                    
+                    function updateCountdown() {
+                        if (totalSeconds <= 0) {
+                            resetCountdown.textContent = 'Resetting...';
+                            setTimeout(() => location.reload(), 1000);
+                            return;
+                        }
+                        
+                        const days = Math.floor(totalSeconds / 86400);
+                        const hours = Math.floor((totalSeconds % 86400) / 3600);
+                        const minutes = Math.floor((totalSeconds % 3600) / 60);
+                        
+                        resetCountdown.textContent = `${days}d ${hours}h ${minutes}m`;
+                        totalSeconds--;
+                    }
+                    
+                    setInterval(updateCountdown, 60000); // Update every minute
+                }
             });
         </script>
     </main>

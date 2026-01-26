@@ -12,9 +12,9 @@
     <nav class="top desktop-only anchor">
         <ul class="left">
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($user['experience'] ?? 0) / 100; ?>"></meter></li>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
             <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
-            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
         <?php endif; ?>
         </ul>
         <ul class="right">
@@ -28,18 +28,28 @@
     <nav class="top mobile-only anchor">
         <ul>
             <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($user['experience'] ?? 0) / 100; ?>"></meter></li>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
             <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
-            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
             <?php endif; ?>
         </ul>
     </nav>
-    <main class="scrollable">
-        <div>
-            <img class="profile-image" src="<?php echo $user['profile_photo'] ?? 'https://picsum.photos/400/400'; ?>">
-            <h1><?php echo htmlspecialchars($user['username']) ?? 'User'; ?></h1>
+    <main class="scrollable <?php echo ($stats['has_golden_profile'] ?? false) ? 'golden-profile' : ''; ?>">
+        <div class="profile-header">
+            <div class="profile-image-container <?php echo ($stats['has_avatar_frame'] ?? false) ? 'vip-frame' : ''; ?>">
+                <img class="profile-image" src="<?php echo $user['profile_photo'] ?? 'https://picsum.photos/400/400'; ?>">
+                <?php if ($stats['has_vip_badge'] ?? false): ?>
+                    <span class="vip-crown" title="VIP Member">👑</span>
+                <?php endif; ?>
+            </div>
+            <h1>
+                <?php echo htmlspecialchars($user['username']) ?? 'User'; ?>
+                <?php if ($stats['has_vip_badge'] ?? false): ?>
+                    <span class="vip-badge" title="VIP">✨</span>
+                <?php endif; ?>
+            </h1>
             <p>Level <?php echo $stats['level'] ?? 1 ?></p>
-            <p>Streak: <?php echo $stats['streak'] ?? 0 ?> 🔥</p>
+            <p>Streak: <?php echo $stats['streak'] ?? 0 ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></p>
             <p>Diamonds: <?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</p>
             <p>Last login date: <?php echo htmlspecialchars($stats['last_active_date'] ?? 'N/A'); ?></p>
             
@@ -49,68 +59,68 @@
                     <a href="/logout" style="background-color: var(--LightGray); color: var(--Background); padding: 10px 20px; border-radius: 4px; text-decoration: none;">Logout</a>
                 </div>
             <?php endif; ?>
-            
-            <div class="selection-bar">
-                <button class="tab-button active" data-tab="stats">Stats</button>
-                <button class="tab-button" data-tab="badges">Badges</button>
-                <button class="tab-button" data-tab="collection">Collection</button>
-            </div>    
-            <div class="tab-content stats active">
-                <div class="stats-grid">
-                    <p class="stats-item">Longest streak: <?php echo $stats['longest_streak'] ?? 0; ?></p>
-                    <p class="stats-item">Posts: <?php echo $stats['posts_count'] ?? 0; ?></p>
-                    <p class="stats-item">Experience: <?php echo $stats['experience'] ?? 0; ?> XP</p>
+        </div>
+        
+        <div class="selection-bar">
+            <button class="tab-button active" data-tab="stats">Stats</button>
+            <button class="tab-button" data-tab="badges">Badges</button>
+            <button class="tab-button" data-tab="collection">Collection</button>
+        </div>    
+        <div class="tab-content stats active">
+            <div class="stats-grid">
+                <p class="stats-item">Longest streak: <?php echo $stats['longest_streak'] ?? 0; ?></p>
+                <p class="stats-item">Posts: <?php echo $stats['posts_count'] ?? 0; ?></p>
+                <p class="stats-item">Experience: <?php echo $stats['experience'] ?? 0; ?> XP</p>
+            </div>
+        </div>
+        <div class="tab-content badges">
+            <?php if (!empty($badges)): ?>
+                <div class="badges-grid">
+                    <?php foreach ($badges as $badge): ?>
+                        <div class="badge-item">
+                            <p><?php echo htmlspecialchars($badge['name']); ?></p>
+                            <img src="<?php echo htmlspecialchars($badge['icon']); ?>" alt="Badge Icon">
+                            <p><?php echo htmlspecialchars($badge['description']); ?></p>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-            </div>
-            <div class="tab-content badges">
-                <?php if (!empty($badges)): ?>
-                    <div class="badges-grid">
-                        <?php foreach ($badges as $badge): ?>
-                            <div class="badge-item">
-                                <p><?php echo htmlspecialchars($badge['name']); ?></p>
-                                <img src="<?php echo htmlspecialchars($badge['icon']); ?>" alt="Badge Icon">
-                                <p><?php echo htmlspecialchars($badge['description']); ?></p>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-            <div class="tab-content collection">
-                <?php if (!empty($posts)): ?>
-                    <div class="posts-grid">
-                        <?php foreach ($posts as $post): ?>
-                            <div class="post-item">
-                                <img src="<?php echo htmlspecialchars($post['image']); ?>" alt="Meme Image">
-                                <p><?php echo htmlspecialchars("Upvotes : ".$post['upvotes']); ?></p>
-                                <p><?php echo htmlspecialchars("Downvotes : ".$post['downvotes']); ?></p>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-            
-            <script>
-                // Tab switching functionality
-                document.addEventListener('DOMContentLoaded', function() {
-                    const tabButtons = document.querySelectorAll('.tab-button');
-                    const tabContents = document.querySelectorAll('.tab-content');
-                    
-                    tabButtons.forEach(button => {
-                        button.addEventListener('click', function() {
-                            const targetTab = this.getAttribute('data-tab');
-                            
-                            // Remove active class from all buttons and contents
-                            tabButtons.forEach(btn => btn.classList.remove('active'));
-                            tabContents.forEach(content => content.classList.remove('active'));
-                            
-                            // Add active class to clicked button and corresponding content
-                            this.classList.add('active');
-                            document.querySelector('.tab-content.' + targetTab).classList.add('active');
-                        });
+            <?php endif; ?>
+        </div>
+        <div class="tab-content collection">
+            <?php if (!empty($posts)): ?>
+                <div class="posts-grid">
+                    <?php foreach ($posts as $post): ?>
+                        <div class="post-item">
+                            <img src="<?php echo htmlspecialchars($post['image']); ?>" alt="Meme Image">
+                            <p><?php echo htmlspecialchars("Upvotes : ".$post['upvotes']); ?></p>
+                            <p><?php echo htmlspecialchars("Downvotes : ".$post['downvotes']); ?></p>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+        
+        <script>
+            // Tab switching functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                const tabButtons = document.querySelectorAll('.tab-button');
+                const tabContents = document.querySelectorAll('.tab-content');
+                
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const targetTab = this.getAttribute('data-tab');
+                        
+                        // Remove active class from all buttons and contents
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        tabContents.forEach(content => content.classList.remove('active'));
+                        
+                        // Add active class to clicked button and corresponding content
+                        this.classList.add('active');
+                        document.querySelector('.tab-content.' + targetTab).classList.add('active');
                     });
                 });
-            </script>
-        </div>
+            });
+        </script>
     </main>
     <nav class="bottom mobile-only anchor">
         <ul>

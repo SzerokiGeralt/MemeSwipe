@@ -1,15 +1,15 @@
 <?php
 require_once 'AppController.php';
 require_once __DIR__ . '/../repository/LeadersRepository.php';
-require_once __DIR__ . '/../repository/UserRepository.php';
+require_once __DIR__ . '/../repository/UserStatsRepository.php';
 
 class LeadersController extends AppController {
     private $leadersRepository;
-    private $userRepository;
+    private $userStatsRepository;
 
     public function __construct() {
         $this->leadersRepository = new LeadersRepository();
-        $this->userRepository = new UserRepository();
+        $this->userStatsRepository = new UserStatsRepository();
     }
 
     public function index(?string $id) {
@@ -19,8 +19,8 @@ class LeadersController extends AppController {
             exit();
         }
 
-        // Get current user stats for navbar
-        $userStats = $this->userRepository->getUserById($_SESSION['user_id']);
+        // Get current user stats for navbar (with expPercentage calculated)
+        $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
 
         // Get period from query parameter, default to 'all'
         $period = $_GET['period'] ?? 'all';

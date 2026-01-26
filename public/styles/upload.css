@@ -1,10 +1,90 @@
+.upload-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.upload-ready, .upload-cooldown {
+    text-align: center;
+}
+
+.upload-status, .cooldown-status {
+    margin-bottom: 2rem;
+}
+
+.status-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.upload-status h2 {
+    color: var(--VibrantOrange);
+    margin-bottom: 0.5rem;
+}
+
+.cooldown-status p {
+    color: var(--LightGray);
+    margin-bottom: 0.5rem;
+}
+
+.cooldown-status h1 {
+    color: var(--VibrantOrange);
+    font-size: 3rem;
+    font-family: monospace;
+    margin: 1rem 0;
+}
+
+.reducer-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.reducer-hint {
+    color: var(--LightGray);
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
 div.dotted-border {
     border: 2px dashed var(--VibrantOrange);
     border-radius: 8px;
     padding: 2rem;
     text-align: center;
-    margin: 5vw;
-    }
+    margin: 2rem 0;
+    transition: all 0.3s ease;
+}
+
+div.dotted-border:not(.disabled):hover {
+    border-color: #e66a00;
+    background: rgba(255, 115, 0, 0.05);
+}
+
+div.dotted-border.disabled {
+    border-color: var(--LightGray);
+    opacity: 0.6;
+}
+
+div.dotted-border.drag-over {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+div.dotted-border h3 {
+    color: var(--TextPrimary);
+    margin-bottom: 0.5rem;
+}
+
+div.dotted-border p {
+    color: var(--LightGray);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
 
 .upload-button {
     background-color: var(--VibrantOrange);
@@ -13,4 +93,164 @@ div.dotted-border {
     padding: 0.75rem 1.5rem;
     border-radius: 4px;
     cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.upload-button:hover:not(:disabled) {
+    background-color: #e66a00;
+    transform: scale(1.05);
+}
+
+.upload-button:disabled {
+    background-color: var(--LightGray);
+    cursor: not-allowed;
+}
+
+.preview-container {
+    position: relative;
+    margin-top: 1rem;
+}
+
+.preview-container img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.remove-preview {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 30px;
+    height: 30px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.remove-preview:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+}
+
+.submit-button {
+    width: 100%;
+    background: linear-gradient(135deg, var(--VibrantOrange), #e66a00);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.submit-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 115, 0, 0.4);
+}
+
+.submit-button:disabled {
+    background: var(--LightGray);
+    cursor: not-allowed;
+}
+
+/* Upload Popup */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.popup-overlay.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.popup-content {
+    background: var(--BackgroundSecondary);
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    animation: popupSlideIn 0.3s ease;
+}
+
+@keyframes popupSlideIn {
+    from {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.popup-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.popup-content h2 {
+    color: var(--VibrantOrange);
+    margin-bottom: 1rem;
+}
+
+.popup-content p {
+    color: var(--TextPrimary);
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.popup-btn {
+    background: var(--VibrantOrange);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.popup-btn:hover {
+    background: #e66a00;
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .upload-container {
+        padding: 1rem;
+    }
+    
+    .cooldown-status h1 {
+        font-size: 2.5rem;
+    }
 }

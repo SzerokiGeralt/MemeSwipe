@@ -130,6 +130,89 @@ div.selection-bar {
     border-radius: 5px;
 }
 
+.quest-reward .claimed {
+    color: #4CAF50;
+}
+
+/* Claim button */
+.claim-btn {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.claim-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+}
+
+.quest-item.claimable {
+    border: 2px solid #4CAF50;
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); }
+    to { box-shadow: 0 0 20px rgba(76, 175, 80, 0.6); }
+}
+
+/* Quest header with reset timer */
+.quests-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.quests-header h2 {
+    margin-bottom: 0;
+}
+
+.reset-timer {
+    background: var(--BackgroundSecondary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reset-label {
+    color: var(--LightGray);
+    font-size: 0.9rem;
+}
+
+.countdown {
+    color: var(--VibrantOrange);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Quest icon as image */
+.quest-icon-img {
+    width: 40px;
+    height: 40px;
+}
+
+.no-quests {
+    text-align: center;
+    color: var(--LightGray);
+    padding: 2rem;
+}
+
 /* Store Grid */
 .store-grid {
     display: grid;
@@ -150,6 +233,46 @@ div.selection-bar {
 .store-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.store-item.owned {
+    opacity: 0.6;
+    border: 2px solid var(--VibrantOrange);
+}
+
+.store-item.cannot-afford {
+    opacity: 0.5;
+    border: 2px solid var(--LightGray);
+}
+
+.store-item.owned::after {
+    content: "✓ Owned";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--VibrantOrange);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.store-item.cannot-afford::after {
+    content: "💎 Insufficient";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--LightGray);
+    color: var(--Background);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.store-item {
+    position: relative;
 }
 
 .store-item img {
@@ -193,6 +316,96 @@ div.selection-bar {
 }
 
 .buy-btn:hover {
+    background: #e66a00;
+    transform: scale(1.05);
+}
+
+.buy-btn:disabled {
+    background: var(--LightGray);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.buy-btn:disabled:hover {
+    transform: none;
+    background: var(--LightGray);
+}
+
+/* Popup Styling */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.popup-overlay.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.popup-content {
+    background: var(--BackgroundSecondary);
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    animation: popupSlideIn 0.3s ease;
+}
+
+@keyframes popupSlideIn {
+    from {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.popup-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.popup-content h2 {
+    color: var(--VibrantOrange);
+    margin-bottom: 1rem;
+}
+
+.popup-content p {
+    color: var(--TextPrimary);
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.popup-btn {
+    background: var(--VibrantOrange);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.popup-btn:hover {
     background: #e66a00;
     transform: scale(1.05);
 }

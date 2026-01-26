@@ -7,16 +7,15 @@
     <title>Dashboard</title>
     <link rel="stylesheet" type="text/css" href="/public/styles/main.css">
     <link rel="stylesheet" type="text/css" href="/public/styles/dashboard.css">
-    <script src="/public/scripts/main.js" defer></script>
 </head>
 <body>
     
     <nav class="top">
         <ul class="left">
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($user['experience'] ?? 0) / 100; ?>"></meter></li>
-            <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
-            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+            <li>Lvl <span id="user-level"><?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?></span> <meter id="exp-meter" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
+            <li><span id="user-diamonds"><?php echo number_format($stats['diamonds'] ?? 0); ?></span> 💎</li>
+            <li><span id="user-streak"><?php echo $stats['streak'] ?? 0; ?></span> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
         <?php endif; ?>
         </ul>
         <ul class="right">
@@ -28,16 +27,96 @@
         </ul>
     </nav>
 
-        <div class="container">
-            <!-- <?php echo $cards['title'] ?? 'Default Title'; ?> -->
-            <img src="<?php echo $cards['imageUrlPath'] ?? 'https://picsum.photos/2156/1228'; ?>">
+    <div class="container">
+        <?php if ($post): ?>
+            <div id="post-container" data-post-id="<?php echo $post['id']; ?>">
+                <img id="post-image" src="<?php echo htmlspecialchars($post['image']); ?>" alt="Meme">
+                <div class="post-info">
+                    <span class="post-author" onclick="window.location.href='/profile/<?php echo htmlspecialchars($post['username']); ?>'">@<?php echo htmlspecialchars($post['username']); ?></span>
+                </div>
+            </div>
+        <?php else: ?>
+            <div id="post-container" class="no-posts">
+                <p>No more posts to vote on! Check back later or upload your own meme!</p>
+                <a href="/upload" class="upload-link">Upload a Meme</a>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- Reward Popup -->
+    <div id="rewardPopup" class="reward-popup">
+        <div class="reward-content">
+            <span id="reward-exp">+15 XP</span>
+            <span id="reward-diamonds">+5 💎</span>
         </div>
+    </div>
+
+    <!-- Level Up Popup -->
+    <div id="levelUpPopup" class="popup-overlay">
+        <div class="popup-content level-up">
+            <div class="popup-icon">🎉</div>
+            <h2>LEVEL UP!</h2>
+            <p id="levelUpMessage">You reached level 5!</p>
+            <p id="levelUpBonus">Bonus: +250 💎</p>
+            <button id="levelUpClose" class="popup-btn">Awesome!</button>
+        </div>
+    </div>
+
+    <!-- Login Required Popup -->
+    <div id="loginPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-icon">🔒</div>
+            <h2>Login Required</h2>
+            <p>You need to be logged in to vote and earn rewards!</p>
+            <div class="popup-buttons">
+                <a href="/login" class="popup-btn">Login</a>
+                <a href="/register" class="popup-btn secondary">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Streak Extended Popup -->
+    <div id="streakExtendedPopup" class="popup-overlay">
+        <div class="popup-content streak-success">
+            <div class="popup-icon">🔥</div>
+            <h2>STREAK EXTENDED!</h2>
+            <p id="streakExtendedMessage">Your streak is now 5 days!</p>
+            <p class="streak-bonus">Keep it up!</p>
+            <button id="streakExtendedClose" class="popup-btn">Nice!</button>
+        </div>
+    </div>
+
+    <!-- Streak Lost Popup -->
+    <div id="streakLostPopup" class="popup-overlay">
+        <div class="popup-content streak-lost">
+            <div class="popup-icon">🧊</div>
+            <h2>STREAK LOST!</h2>
+            <p id="streakLostMessage">You lost your 7 day streak...</p>
+            <p class="streak-restart">Starting fresh with day 1!</p>
+            <button id="streakLostClose" class="popup-btn">Start Again</button>
+        </div>
+    </div>
+
+    <!-- New Streak Popup -->
+    <div id="newStreakPopup" class="popup-overlay">
+        <div class="popup-content streak-new">
+            <div class="popup-icon">✨</div>
+            <h2>WELCOME!</h2>
+            <p id="newStreakMessage">Your streak begins today!</p>
+            <p class="streak-tip">Come back tomorrow to keep it going!</p>
+            <button id="newStreakClose" class="popup-btn">Let's Go!</button>
+        </div>
+    </div>
 
     <nav class="bottom">
         <ul>
-            <li class="desktop-only"><button type="button" id="downvote-btn">Downvote <span class="material-symbols-outlined">thumb_down</span></button></li>
-            <li class="desktop-only"><button type="button" id="comments-btn">Comments <span class="material-symbols-outlined">comment</span></button></li>
-            <li class="desktop-only"><button type="button" id="upvote-btn">Upvote <span class="material-symbols-outlined">thumb_up</span></button></li>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <li class="desktop-only"><button type="button" id="downvote-btn" <?php echo !$post ? 'disabled' : ''; ?>>Downvote <span class="material-symbols-outlined">thumb_down</span></button></li>
+                <li class="desktop-only"><button type="button" id="skip-btn" <?php echo !$post ? 'disabled' : ''; ?>>Skip <span class="material-symbols-outlined">skip_next</span></button></li>
+                <li class="desktop-only"><button type="button" id="upvote-btn" <?php echo !$post ? 'disabled' : ''; ?>>Upvote <span class="material-symbols-outlined">thumb_up</span></button></li>
+            <?php else: ?>
+                <li class="desktop-only"><button type="button" id="login-prompt-btn">Login to Vote <span class="material-symbols-outlined">login</span></button></li>
+            <?php endif; ?>
         </ul>
     </nav>
     <nav class="bottom mobile-only anchor">
@@ -49,5 +128,299 @@
             <li class="mobile-only"><a href="/profile">Profile<span class="material-symbols-outlined">person</span></a></li>
         </ul>
     </nav>
+
+    <?php if (isset($_SESSION['user_id'])): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const postContainer = document.getElementById('post-container');
+            const postImage = document.getElementById('post-image');
+            const upvoteBtn = document.getElementById('upvote-btn');
+            const downvoteBtn = document.getElementById('downvote-btn');
+            const skipBtn = document.getElementById('skip-btn');
+            const rewardPopup = document.getElementById('rewardPopup');
+            const levelUpPopup = document.getElementById('levelUpPopup');
+            const levelUpClose = document.getElementById('levelUpClose');
+            
+            // Streak popups
+            const streakExtendedPopup = document.getElementById('streakExtendedPopup');
+            const streakLostPopup = document.getElementById('streakLostPopup');
+            const newStreakPopup = document.getElementById('newStreakPopup');
+
+            let isVoting = false;
+            
+            // Handle streak popup on page load
+            <?php if (isset($streakInfo)): ?>
+            const streakInfo = <?php echo json_encode($streakInfo); ?>;
+            
+            if (streakInfo && streakInfo.status) {
+                setTimeout(() => {
+                    switch(streakInfo.status) {
+                        case 'extended':
+                            document.getElementById('streakExtendedMessage').textContent = 
+                                `Your streak is now ${streakInfo.streak} days!`;
+                            streakExtendedPopup.classList.add('show');
+                            break;
+                        case 'lost':
+                            document.getElementById('streakLostMessage').textContent = 
+                                `You lost your ${streakInfo.lostStreak} day streak...`;
+                            streakLostPopup.classList.add('show');
+                            break;
+                        case 'new':
+                            newStreakPopup.classList.add('show');
+                            break;
+                        // 'maintained' - no popup needed
+                    }
+                }, 500);
+            }
+            <?php endif; ?>
+            
+            // Close streak popups
+            document.getElementById('streakExtendedClose')?.addEventListener('click', () => {
+                streakExtendedPopup.classList.remove('show');
+            });
+            document.getElementById('streakLostClose')?.addEventListener('click', () => {
+                streakLostPopup.classList.remove('show');
+            });
+            document.getElementById('newStreakClose')?.addEventListener('click', () => {
+                newStreakPopup.classList.remove('show');
+            });
+
+            // Vote function
+            async function vote(voteType) {
+                if (isVoting) return;
+                
+                const postId = postContainer.dataset.postId;
+                if (!postId) return;
+
+                isVoting = true;
+                
+                // Disable buttons
+                if (upvoteBtn) upvoteBtn.disabled = true;
+                if (downvoteBtn) downvoteBtn.disabled = true;
+                if (skipBtn) skipBtn.disabled = true;
+
+                try {
+                    const response = await fetch('/dashboard/vote', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            post_id: parseInt(postId),
+                            vote_type: voteType
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Show reward popup
+                        showRewardPopup(data.rewards.exp, data.rewards.diamonds, voteType);
+                        
+                        // Update stats in navbar
+                        updateNavbarStats(data.stats);
+                        
+                        // Check for level up
+                        if (data.levelUp && data.levelUp.leveled) {
+                            setTimeout(() => {
+                                showLevelUpPopup(data.levelUp.newLevel, data.levelUp.bonusDiamonds);
+                            }, 1500);
+                        }
+                        
+                        // Load next post after animation
+                        setTimeout(() => {
+                            loadNextPost(data.nextPost);
+                        }, 1000);
+                    } else {
+                        console.error('Vote failed:', data.message);
+                        // Re-enable buttons on error
+                        enableButtons();
+                    }
+                } catch (error) {
+                    console.error('Error voting:', error);
+                    enableButtons();
+                }
+
+                isVoting = false;
+            }
+
+            // Show reward popup
+            function showRewardPopup(exp, diamonds, voteType) {
+                const rewardExp = document.getElementById('reward-exp');
+                const rewardDiamonds = document.getElementById('reward-diamonds');
+                
+                rewardExp.textContent = `+${exp} XP`;
+                rewardDiamonds.textContent = `+${diamonds} 💎`;
+                
+                // Position popup near the clicked button
+                rewardPopup.classList.add('show');
+                rewardPopup.classList.add(voteType);
+                
+                // Animate the post image
+                postImage.classList.add(voteType === 'upvote' ? 'swipe-right' : 'swipe-left');
+                
+                setTimeout(() => {
+                    rewardPopup.classList.remove('show');
+                    rewardPopup.classList.remove(voteType);
+                }, 1500);
+            }
+
+            // Show level up popup
+            function showLevelUpPopup(newLevel, bonusDiamonds) {
+                document.getElementById('levelUpMessage').textContent = `You reached level ${newLevel}!`;
+                document.getElementById('levelUpBonus').textContent = `Bonus: +${bonusDiamonds} 💎`;
+                levelUpPopup.classList.add('show');
+            }
+
+            // Update navbar stats
+            function updateNavbarStats(stats) {
+                const levelEl = document.getElementById('user-level');
+                const diamondsEl = document.getElementById('user-diamonds');
+                const meterEl = document.getElementById('exp-meter');
+                
+                if (levelEl) levelEl.textContent = stats.level;
+                if (diamondsEl) diamondsEl.textContent = stats.diamonds.toLocaleString();
+                if (meterEl) meterEl.value = stats.expPercentage;
+            }
+
+            // Load next post
+            function loadNextPost(nextPost) {
+                if (nextPost) {
+                    postContainer.dataset.postId = nextPost.id;
+                    postImage.src = nextPost.image;
+                    postImage.classList.remove('swipe-right', 'swipe-left');
+                    postImage.classList.add('slide-in');
+                    
+                    document.getElementById('upvote-count').textContent = nextPost.upvotes;
+                    document.getElementById('downvote-count').textContent = nextPost.downvotes;
+                    document.querySelector('.post-author').textContent = '@' + nextPost.username;
+                    
+                    setTimeout(() => {
+                        postImage.classList.remove('slide-in');
+                        enableButtons();
+                    }, 300);
+                } else {
+                    // No more posts
+                    postContainer.innerHTML = `
+                        <div class="no-posts">
+                            <p>🎉 You've voted on all posts!</p>
+                            <p>Check back later for new content!</p>
+                            <a href="/upload" class="upload-link">Upload a Meme</a>
+                        </div>
+                    `;
+                    if (upvoteBtn) upvoteBtn.disabled = true;
+                    if (downvoteBtn) downvoteBtn.disabled = true;
+                    if (skipBtn) skipBtn.disabled = true;
+                }
+            }
+
+            // Enable buttons
+            function enableButtons() {
+                if (upvoteBtn) upvoteBtn.disabled = false;
+                if (downvoteBtn) downvoteBtn.disabled = false;
+                if (skipBtn) skipBtn.disabled = false;
+            }
+
+            // Skip to next post without voting
+            async function skipPost() {
+                if (isVoting) return;
+                isVoting = true;
+                
+                postImage.classList.add('fade-out');
+                
+                try {
+                    const response = await fetch('/dashboard/next');
+                    const data = await response.json();
+                    
+                    setTimeout(() => {
+                        postImage.classList.remove('fade-out');
+                        if (data.post) {
+                            loadNextPost(data.post);
+                        }
+                    }, 300);
+                } catch (error) {
+                    console.error('Error skipping:', error);
+                    enableButtons();
+                }
+                
+                isVoting = false;
+            }
+
+            // Event listeners
+            if (upvoteBtn) {
+                upvoteBtn.addEventListener('click', () => vote('upvote'));
+            }
+            if (downvoteBtn) {
+                downvoteBtn.addEventListener('click', () => vote('downvote'));
+            }
+            if (skipBtn) {
+                skipBtn.addEventListener('click', skipPost);
+            }
+            
+            // Close level up popup
+            levelUpClose.addEventListener('click', () => {
+                levelUpPopup.classList.remove('show');
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a') {
+                    if (downvoteBtn && !downvoteBtn.disabled) vote('downvote');
+                } else if (e.key === 'ArrowRight' || e.key === 'd') {
+                    if (upvoteBtn && !upvoteBtn.disabled) vote('upvote');
+                } else if (e.key === 'ArrowDown' || e.key === 's') {
+                    if (skipBtn && !skipBtn.disabled) skipPost();
+                }
+            });
+
+            // Touch swipe support
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            if (postContainer) {
+                postContainer.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                });
+
+                postContainer.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                });
+            }
+
+            function handleSwipe() {
+                const diff = touchEndX - touchStartX;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) {
+                        // Swipe right = upvote
+                        vote('upvote');
+                    } else {
+                        // Swipe left = downvote
+                        vote('downvote');
+                    }
+                }
+            }
+        });
+    </script>
+    <?php else: ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginPromptBtn = document.getElementById('login-prompt-btn');
+            const loginPopup = document.getElementById('loginPopup');
+            
+            if (loginPromptBtn) {
+                loginPromptBtn.addEventListener('click', () => {
+                    loginPopup.classList.add('show');
+                });
+            }
+            
+            loginPopup.addEventListener('click', (e) => {
+                if (e.target === loginPopup) {
+                    loginPopup.classList.remove('show');
+                }
+            });
+        });
+    </script>
+    <?php endif; ?>
 </body>
 </html>

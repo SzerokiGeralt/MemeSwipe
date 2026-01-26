@@ -12,9 +12,9 @@
     <nav class="top desktop-only anchor">
         <ul class="left">
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['experience'] ?? 0) / 100; ?>"></meter></li>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
             <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
-            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
         <?php endif; ?>
         </ul>
         <ul class="right">
@@ -28,9 +28,9 @@
     <nav class="top mobile-only anchor">
         <ul>
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['experience'] ?? 0) / 100; ?>"></meter></li>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
             <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
-            <li><?php echo $stats['streak'] ?? 0; ?> 🔥</li>
+            <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
         <?php endif; ?>
         </ul>
     </nav>

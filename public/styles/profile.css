@@ -308,3 +308,98 @@
         width: 100%;
     }
 }
+
+/* VIP Features */
+.golden-profile {
+    background: linear-gradient(135deg, #2d2510 0%, #1a1505 50%, #2d2510 100%) !important;
+}
+
+.golden-profile::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.profile-header {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.profile-image-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.profile-image-container.vip-frame {
+    padding: 8px;
+    background: linear-gradient(135deg, #ffd700, #ffb800, #ffd700, #fff4b0, #ffd700);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.2);
+    animation: vipGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes vipGlow {
+    from {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.2);
+    }
+    to {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.7), 0 0 60px rgba(255, 215, 0, 0.3);
+    }
+}
+
+.profile-image-container.vip-frame .profile-image {
+    border-color: #1a1505;
+}
+
+.vip-crown {
+    position: absolute;
+    top: -15px;
+    right: -5px;
+    font-size: 2rem;
+    animation: crownBounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes crownBounce {
+    0%, 100% {
+        transform: translateY(0) rotate(-10deg);
+    }
+    50% {
+        transform: translateY(-5px) rotate(10deg);
+    }
+}
+
+.vip-badge {
+    font-size: 1.2rem;
+    vertical-align: middle;
+    animation: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.2);
+    }
+}
+
+/* Golden profile heading */
+.golden-profile h1 {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.golden-profile .profile-header p {
+    color: #d4af37;
+}

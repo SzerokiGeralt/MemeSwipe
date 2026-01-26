@@ -29,7 +29,13 @@ class Routing {
     // Special routes that require exact path matching
     public static $specialRoutes = [
         'profile/edit' => ['controller' => 'ProfileController', 'action' => 'edit'],
-        'profile/update' => ['controller' => 'ProfileController', 'action' => 'update']
+        'profile/update' => ['controller' => 'ProfileController', 'action' => 'update'],
+        'quests/purchase' => ['controller' => 'QuestsController', 'action' => 'purchase'],
+        'quests/claim' => ['controller' => 'QuestsController', 'action' => 'claimReward'],
+        'dashboard/vote' => ['controller' => 'DashboardController', 'action' => 'vote'],
+        'dashboard/next' => ['controller' => 'DashboardController', 'action' => 'getNextPost'],
+        'upload/submit' => ['controller' => 'UploadController', 'action' => 'uploadFile'],
+        'upload/cooldown' => ['controller' => 'UploadController', 'action' => 'getCooldown']
     ];
 
     // Singleton

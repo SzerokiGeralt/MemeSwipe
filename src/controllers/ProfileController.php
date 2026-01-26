@@ -2,14 +2,17 @@
 require_once 'AppController.php';
 require_once __DIR__ . '/../repository/UserRepository.php';
 require_once __DIR__ . '/../repository/UserStatsRepository.php';
+require_once __DIR__ . '/../repository/ItemsRepository.php';
 
 class ProfileController extends AppController {
     private $userRepository;
     private $userStatsRepository;
+    private $itemsRepository;
 
     public function __construct() {
         $this->userRepository = new UserRepository();
         $this->userStatsRepository = new UserStatsRepository();
+        $this->itemsRepository = new ItemsRepository();
     }
 
     public function show(?string $username) {
@@ -41,6 +44,10 @@ class ProfileController extends AppController {
         if (!$userStats) {
             $userStats = $this->userStatsRepository->createStatsForUser($user['id']);
         }
+        
+        // Get VIP status from purchased items
+        $vipStatus = $this->itemsRepository->getUserVipStatus($user['id']);
+        $userStats = array_merge($userStats, $vipStatus);
         
         // Update last active date if viewing own profile
         if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $user['id']) {
