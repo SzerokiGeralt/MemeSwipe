@@ -10,31 +10,81 @@ class SecurityController extends AppController {
     private $userRepository;
     private $userStatsRepository;
     
+    // Generic error message for login failures (security: don't reveal if email exists)
+    private const LOGIN_ERROR_MESSAGE = 'Invalid email or password';
+    
     public function __construct() {
         $this->userRepository = new UserRepository();
         $this->userStatsRepository = new UserStatsRepository();
     }
+    
+    /**
+     * Enforce HTTPS for security-sensitive pages
+     */
+    private function enforceHttps(): void {
+        // Skip HTTPS enforcement in development/localhost
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        if (strpos($host, 'localhost') !== false || strpos($host, '127.0.0.1') !== false) {
+            return;
+        }
+        
+        // Check if request is over HTTPS
+        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
+                   || ($_SERVER['SERVER_PORT'] ?? 80) == 443
+                   || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+        
+        if (!$isHttps) {
+            $httpsUrl = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            header('Location: ' . $httpsUrl, true, 301);
+            exit();
+        }
+    }
+    
+    /**
+     * Validate email format
+     */
+    private function isValidEmail(string $email): bool {
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    }
+    
+    /**
+     * Sanitize input string
+     */
+    private function sanitizeInput(string $input): string {
+        return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+    }
 
 
     public function login() {
-        // TODO: Get data from login form
-        // check if user exists in database
-
-
-        //TODO: Check for existing email
+        // Enforce HTTPS for login
+        $this->enforceHttps();
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'] ?? '';
+            $email = $this->sanitizeInput($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
+
+            // Validate email format
+            if (!$this->isValidEmail($email)) {
+                return $this->render('login', ['messages' => self::LOGIN_ERROR_MESSAGE]);
+            }
 
             $user = $this->userRepository->getUserByEmail($email);
 
+            // Use generic error message - don't reveal if email exists
             if (!$user) {
-            return $this->render('login', ['messages' => 'User not found']);
+                // Add small delay to prevent timing attacks
+                usleep(random_int(100000, 300000)); // 100-300ms
+                return $this->render('login', ['messages' => self::LOGIN_ERROR_MESSAGE]);
             }
 
             if (!password_verify($password, $user['password'])) {
-                return $this->render('login', ['messages' => 'Wrong password']);
+                // Add small delay to prevent timing attacks
+                usleep(random_int(100000, 300000)); // 100-300ms
+                return $this->render('login', ['messages' => self::LOGIN_ERROR_MESSAGE]);
             }
+            
+            // Regenerate session ID to prevent session fixation
+            session_regenerate_id(true);
             
             // Successful login - store user info in session
             $_SESSION['user_id'] = $user['id'];
@@ -44,8 +94,8 @@ class SecurityController extends AppController {
             // Update last active date
             $this->userStatsRepository->updateLastActiveDate($user['id']);
             
-            $url = "http://$_SERVER[HTTP_HOST]";
-            header("Location: {$url}/dashboard");
+            // Use relative redirect for security
+            header("Location: /dashboard");
             exit();
 
         }
@@ -54,14 +104,52 @@ class SecurityController extends AppController {
     }
 
     public function register() {
+        // Enforce HTTPS for registration
+        $this->enforceHttps();
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'] ?? '';
-            $email = $_POST['email'] ?? '';
+            $username = $this->sanitizeInput($_POST['username'] ?? '');
+            $email = $this->sanitizeInput($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
+            $confirmPassword = $_POST['confirm_password'] ?? '';
 
             // Simple validation
             if (empty($username) || empty($email) || empty($password)) {
                 return $this->render('register', ['messages' => 'All fields are required']);
+            }
+            
+            // Validate email format
+            if (!$this->isValidEmail($email)) {
+                return $this->render('register', [
+                    'messages' => 'Invalid email format',
+                    'username' => $username
+                ]);
+            }
+            
+            // Validate password length
+            if (strlen($password) < 8) {
+                return $this->render('register', [
+                    'messages' => 'Password must be at least 8 characters long',
+                    'username' => $username,
+                    'email' => $email
+                ]);
+            }
+            
+            // Validate password confirmation
+            if ($password !== $confirmPassword) {
+                return $this->render('register', [
+                    'messages' => 'Passwords do not match',
+                    'username' => $username,
+                    'email' => $email
+                ]);
+            }
+            
+            // Validate username format (alphanumeric, 3-20 chars)
+            if (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $username)) {
+                return $this->render('register', [
+                    'messages' => 'Username must be 3-20 characters (letters, numbers, underscore only)',
+                    'email' => $email
+                ]);
             }
 
             // Check if email already exists

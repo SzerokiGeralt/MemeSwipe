@@ -7,6 +7,7 @@ class Repository {
 
     public function __construct()
     {
-        $this->database = new Database();
+        // Use singleton instance of Database
+        $this->database = Database::getInstance();
     }
 }
