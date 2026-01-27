@@ -22,13 +22,9 @@ class DashboardController extends AppController {
     public function index(?string $id) {
         $userStats = null;
         $currentPost = null;
-        $streakInfo = null;
         
         if (isset($_SESSION['user_id'])) {
-            // Check and process streak first
-            $streakInfo = $this->userStatsRepository->checkAndProcessStreak($_SESSION['user_id']);
-            
-            // Then get updated stats
+            // Get user stats (streak is now handled globally by AppController)
             $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
             // Get a random post that user hasn't voted on yet
             $currentPost = $this->postsRepository->getRandomUnvotedPost($_SESSION['user_id']);
@@ -39,8 +35,7 @@ class DashboardController extends AppController {
 
         return $this->render('dashboard', [
             'stats' => $userStats,
-            'post' => $currentPost,
-            'streakInfo' => $streakInfo
+            'post' => $currentPost
         ]);
     }
 

@@ -36,7 +36,7 @@
             <?= $messages; ?>
             </p>
         <?php endif; ?>
-        <form method="post" action="/register">
+        <form method="post" action="/register" enctype="multipart/form-data">
             <h1>Register</h1>
             <input type="text" id="username" name="username" placeholder="Username" 
                 value="<?= htmlspecialchars($username ?? '') ?>" required>
@@ -48,8 +48,50 @@
             <br>
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
             <br>
+            <div style="margin: 1rem 0;">
+                <label for="profile_photo" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Profile Photo *</label>
+                <input type="file" id="profile_photo" name="profile_photo" accept="image/jpeg,image/png,image/jpg,image/webp" required style="margin-bottom: 0.5rem;">
+                <div id="photoPreview" style="display: none; margin-top: 1rem;">
+                    <img id="previewImage" src="" alt="Preview" style="max-width: 200px; border-radius: 50%; border: 2px solid var(--VibrantOrange);">
+                </div>
+                <small style="display: block; color: var(--LightGray); margin-top: 0.5rem;">Max 5MB. Formats: JPEG, PNG, WebP</small>
+            </div>
+            <br>
             <input type="submit" value="Register">
         </form>
+        
+        <script>
+            // Preview profile photo
+            document.getElementById('profile_photo').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validate file size (5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File too large! Maximum size is 5MB.');
+                        this.value = '';
+                        document.getElementById('photoPreview').style.display = 'none';
+                        return;
+                    }
+                    
+                    // Validate file type
+                    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Invalid file type! Please select a JPEG, PNG, or WebP image.');
+                        this.value = '';
+                        document.getElementById('photoPreview').style.display = 'none';
+                        return;
+                    }
+                    
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('previewImage').src = e.target.result;
+                        document.getElementById('photoPreview').style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        </script>
         
         <p>Already have an account? <a href="/login">Login</a></p>
     </main>

@@ -130,38 +130,17 @@
 
     <?php if (isset($_SESSION['user_id'])): ?>
     <script src="/public/scripts/dashboard.js"></script>
+    <?php endif; ?>
+    
+    <!-- Global streak popup handling -->
+    <?php if (isset($streakInfo)): ?>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            <?php if (isset($streakInfo)): ?>
-            const streakInfo = <?php echo json_encode($streakInfo); ?>;
-            const streakExtendedPopup = document.getElementById('streakExtendedPopup');
-            const streakLostPopup = document.getElementById('streakLostPopup');
-            const newStreakPopup = document.getElementById('newStreakPopup');
-            
-            if (streakInfo && streakInfo.status) {
-                setTimeout(() => {
-                    switch(streakInfo.status) {
-                        case 'extended':
-                            document.getElementById('streakExtendedMessage').textContent = 
-                                `Your streak is now ${streakInfo.streak} days!`;
-                            streakExtendedPopup.classList.add('show');
-                            break;
-                        case 'lost':
-                            document.getElementById('streakLostMessage').textContent = 
-                                `You lost your ${streakInfo.lostStreak} day streak...`;
-                            streakLostPopup.classList.add('show');
-                            break;
-                        case 'new':
-                            newStreakPopup.classList.add('show');
-                            break;
-                        // 'maintained' - no popup needed
-                    }
-                }, 500);
-            }
-            <?php endif; ?>
-        });
+        window.streakInfo = <?php echo json_encode($streakInfo); ?>;
     </script>
-    <?php else: ?>
+    <?php endif; ?>
+    <script src="/public/scripts/streak.js"></script>
+    
+    <?php if (!isset($_SESSION['user_id'])): ?>
     <script src="/public/scripts/dashboard-login.js"></script>
     <?php endif; ?>
 </body>

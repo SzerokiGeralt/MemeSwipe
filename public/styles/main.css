@@ -324,3 +324,148 @@ main.scrollable {
     }
 }
 
+/* =================================
+   Global Popup Styles
+   ================================= */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.popup-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.popup-content {
+  background: var(--BackgroundSecondary);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 2px solid var(--VibrantOrange);
+}
+
+.popup-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.popup-content h2 {
+  color: var(--VibrantOrange);
+  margin-bottom: 0.5rem;
+}
+
+.popup-content p {
+  color: var(--LightGray);
+  margin-bottom: 1rem;
+}
+
+.popup-btn {
+  background: var(--VibrantOrange);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.popup-btn:hover {
+  background: var(--OrangeHover);
+  transform: scale(1.05);
+}
+
+.popup-btn.secondary {
+  background: var(--LightGray);
+  color: var(--Background);
+  margin-left: 0.5rem;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* =================================
+   Streak Popup Styles
+   ================================= */
+.popup-content.streak-success {
+  border: 3px solid #ff6b00;
+  animation: streakPulse 0.5s ease;
+  background: linear-gradient(135deg, var(--BackgroundSecondary), #2d1a00);
+}
+
+.popup-content.streak-lost {
+  border: 3px solid #00bcd4;
+  animation: frozenPulse 0.5s ease;
+  background: linear-gradient(135deg, var(--BackgroundSecondary), #001a20);
+}
+
+.popup-content.streak-new {
+  border: 3px solid #9c27b0;
+  animation: newStreakPulse 0.5s ease;
+  background: linear-gradient(135deg, var(--BackgroundSecondary), #1a0020);
+}
+
+@keyframes streakPulse {
+  0% { transform: scale(0.5); opacity: 0; box-shadow: 0 0 0 rgba(255, 107, 0, 0); }
+  50% { transform: scale(1.1); box-shadow: 0 0 60px rgba(255, 107, 0, 0.5); }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 30px rgba(255, 107, 0, 0.3); }
+}
+
+@keyframes frozenPulse {
+  0% { transform: scale(0.5); opacity: 0; box-shadow: 0 0 0 rgba(0, 188, 212, 0); }
+  50% { transform: scale(1.1); box-shadow: 0 0 60px rgba(0, 188, 212, 0.5); }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 30px rgba(0, 188, 212, 0.3); }
+}
+
+@keyframes newStreakPulse {
+  0% { transform: scale(0.5); opacity: 0; box-shadow: 0 0 0 rgba(156, 39, 176, 0); }
+  50% { transform: scale(1.1); box-shadow: 0 0 60px rgba(156, 39, 176, 0.5); }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 30px rgba(156, 39, 176, 0.3); }
+}
+
+.popup-content.streak-success h2 {
+  color: #ff6b00;
+  text-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
+}
+
+.popup-content.streak-lost h2 {
+  color: #00bcd4;
+  text-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+}
+
+.popup-content.streak-new h2 {
+  color: #9c27b0;
+  text-shadow: 0 0 10px rgba(156, 39, 176, 0.5);
+}
+
+.streak-bonus, .streak-tip {
+  color: #ffa726 !important;
+  font-style: italic;
+}
+
+.streak-restart {
+  color: #4fc3f7 !important;
+}
+

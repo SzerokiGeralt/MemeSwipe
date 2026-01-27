@@ -78,9 +78,26 @@ class UserRepository extends Repository {
         $query = $this->database->connect()->prepare('
             INSERT INTO users (username, email, password)
             VALUES (?, ?, ?)
+            RETURNING id
         ');
         $query->execute([$username, $email, password_hash($password, PASSWORD_BCRYPT)]);
-        return;
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        return $result['id'] ?? null;
+    }
+    
+    public function createUserWithPhoto(
+        string $username, 
+        string $email, 
+        string $password,
+        ?string $profilePhoto = null) {
+        $query = $this->database->connect()->prepare('
+            INSERT INTO users (username, email, password, profile_photo)
+            VALUES (?, ?, ?, ?)
+            RETURNING id
+        ');
+        $query->execute([$username, $email, password_hash($password, PASSWORD_BCRYPT), $profilePhoto]);
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        return $result['id'] ?? null;
     }
 
     public function updateUser(int $userId, string $username, string $email, string $profilePhoto = null) {

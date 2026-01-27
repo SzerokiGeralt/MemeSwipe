@@ -105,7 +105,6 @@ class ProfileController extends AppController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = $_POST['username'] ?? '';
             $email = $_POST['email'] ?? '';
-            $profilePhoto = $_POST['profile_photo'] ?? '';
             $currentPassword = $_POST['current_password'] ?? '';
             $newPassword = $_POST['new_password'] ?? '';
             $confirmPassword = $_POST['confirm_password'] ?? '';
@@ -194,6 +193,23 @@ class ProfileController extends AppController {
                     'messages' => 'Email is already taken'
                 ]);
             }
+            
+            // Handle profile photo upload
+            $profilePhoto = null;
+            if (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] === UPLOAD_ERR_OK) {
+                $uploadResult = $this->handleProfilePhotoUpload($_FILES['profile_photo']);
+                if ($uploadResult['success']) {
+                    $profilePhoto = $uploadResult['path'];
+                } else {
+                    $user = $this->userRepository->getUserByUsername($_SESSION['username']);
+                    $userStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
+                    return $this->render('profile_edit', [
+                        'user' => $user,
+                        'stats' => $userStats,
+                        'messages' => $uploadResult['message']
+                    ]);
+                }
+            }
 
             // Update user data
             $this->userRepository->updateUser($_SESSION['user_id'], $username, $email, $profilePhoto);
@@ -270,5 +286,45 @@ class ProfileController extends AppController {
         if (!in_array('VIP', $badgeNames) && ($stats['has_vip_badge'] ?? false)) {
             $this->userRepository->assignBadgeToUser($userId, 'VIP');
         }
+    }
+    
+    /**
+     * Handle profile photo upload
+     */
+    private function handleProfilePhotoUpload(array $file): array {
+        // Validate file type
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+        
+        if (!in_array($mimeType, $allowedTypes)) {
+            return ['success' => false, 'message' => 'Invalid file type. Only JPEG, PNG, and WebP are allowed.'];
+        }
+        
+        // Validate file size (5MB)
+        if ($file['size'] > 5 * 1024 * 1024) {
+            return ['success' => false, 'message' => 'File too large. Maximum size is 5MB.'];
+        }
+        
+        // Generate unique filename
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'profile_' . uniqid() . '_' . time() . '.' . $extension;
+        
+        // Create uploads/profiles directory if it doesn't exist
+        $uploadDir = 'public/uploads/profiles/';
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+        
+        $uploadPath = $uploadDir . $filename;
+        
+        // Move the file
+        if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+            return ['success' => false, 'message' => 'Failed to save the file.'];
+        }
+        
+        // Return the web-accessible path
+        return ['success' => true, 'path' => '/' . $uploadPath];
     }
 }

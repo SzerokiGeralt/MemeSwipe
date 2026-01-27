@@ -44,7 +44,7 @@
                 </div>
             <?php endif; ?>
             
-            <form method="POST" action="/profile/update" class="edit-profile-form">
+            <form method="POST" action="/profile/update" enctype="multipart/form-data" class="edit-profile-form">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['username'] ?? ''); ?>" required>
@@ -56,9 +56,9 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="profile_photo">Profile Photo URL</label>
-                    <input type="url" id="profile_photo" name="profile_photo" value="<?php echo htmlspecialchars($user['profile_photo'] ?? ''); ?>" placeholder="https://example.com/photo.jpg">
-                    <small>Enter a URL to your profile photo</small>
+                    <label for="profile_photo">Profile Photo</label>
+                    <input type="file" id="profile_photo" name="profile_photo" accept="image/jpeg,image/png,image/jpg,image/webp">
+                    <small>Upload a new profile photo (Max 5MB, JPEG/PNG/WebP). Leave empty to keep current photo.</small>
                 </div>
                 
                 <div class="password-section">
@@ -95,18 +95,76 @@
         </div>
         
         <script>
-            // Preview profile photo on URL change
-            document.getElementById('profile_photo').addEventListener('input', function(e) {
-                const url = e.target.value;
+            // Preview profile photo on file selection
+            document.getElementById('profile_photo').addEventListener('change', function(e) {
+                const file = e.target.files[0];
                 const preview = document.getElementById('preview-image');
-                if (url) {
-                    preview.src = url;
-                    preview.onerror = function() {
-                        preview.src = 'https://picsum.photos/150/150';
+                
+                if (file) {
+                    // Validate file size (5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File too large! Maximum size is 5MB.');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    // Validate file type
+                    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Invalid file type! Please select a JPEG, PNG, or WebP image.');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
                     };
+                    reader.readAsDataURL(file);
                 }
             });
         </script>
+
+        <!-- Streak Extended Popup -->
+        <div id="streakExtendedPopup" class="popup-overlay">
+            <div class="popup-content streak-success">
+                <div class="popup-icon">🔥</div>
+                <h2>STREAK EXTENDED!</h2>
+                <p id="streakExtendedMessage">Your streak is now 5 days!</p>
+                <p class="streak-bonus">Keep it up!</p>
+                <button id="streakExtendedClose" class="popup-btn">Nice!</button>
+            </div>
+        </div>
+
+        <!-- Streak Lost Popup -->
+        <div id="streakLostPopup" class="popup-overlay">
+            <div class="popup-content streak-lost">
+                <div class="popup-icon">🧊</div>
+                <h2>STREAK LOST!</h2>
+                <p id="streakLostMessage">You lost your 7 day streak...</p>
+                <p class="streak-restart">Starting fresh with day 1!</p>
+                <button id="streakLostClose" class="popup-btn">Start Again</button>
+            </div>
+        </div>
+
+        <!-- New Streak Popup -->
+        <div id="newStreakPopup" class="popup-overlay">
+            <div class="popup-content streak-new">
+                <div class="popup-icon">✨</div>
+                <h2>WELCOME!</h2>
+                <p id="newStreakMessage">Your streak begins today!</p>
+                <p class="streak-tip">Come back tomorrow to keep it going!</p>
+                <button id="newStreakClose" class="popup-btn">Let's Go!</button>
+            </div>
+        </div>
+
+        <?php if (isset($streakInfo)): ?>
+        <script>
+            window.streakInfo = <?php echo json_encode($streakInfo); ?>;
+        </script>
+        <?php endif; ?>
+        <script src="/public/scripts/streak.js"></script>
     </main>
     <nav class="bottom mobile-only anchor">
         <ul>

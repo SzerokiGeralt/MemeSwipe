@@ -130,6 +130,46 @@
                 });
             });
         </script>
+
+        <!-- Streak Extended Popup -->
+        <div id="streakExtendedPopup" class="popup-overlay">
+            <div class="popup-content streak-success">
+                <div class="popup-icon">🔥</div>
+                <h2>STREAK EXTENDED!</h2>
+                <p id="streakExtendedMessage">Your streak is now 5 days!</p>
+                <p class="streak-bonus">Keep it up!</p>
+                <button id="streakExtendedClose" class="popup-btn">Nice!</button>
+            </div>
+        </div>
+
+        <!-- Streak Lost Popup -->
+        <div id="streakLostPopup" class="popup-overlay">
+            <div class="popup-content streak-lost">
+                <div class="popup-icon">🧊</div>
+                <h2>STREAK LOST!</h2>
+                <p id="streakLostMessage">You lost your 7 day streak...</p>
+                <p class="streak-restart">Starting fresh with day 1!</p>
+                <button id="streakLostClose" class="popup-btn">Start Again</button>
+            </div>
+        </div>
+
+        <!-- New Streak Popup -->
+        <div id="newStreakPopup" class="popup-overlay">
+            <div class="popup-content streak-new">
+                <div class="popup-icon">✨</div>
+                <h2>WELCOME!</h2>
+                <p id="newStreakMessage">Your streak begins today!</p>
+                <p class="streak-tip">Come back tomorrow to keep it going!</p>
+                <button id="newStreakClose" class="popup-btn">Let's Go!</button>
+            </div>
+        </div>
+
+        <?php if (isset($streakInfo)): ?>
+        <script>
+            window.streakInfo = <?php echo json_encode($streakInfo); ?>;
+        </script>
+        <?php endif; ?>
+        <script src="/public/scripts/streak.js"></script>
     </main>
     <nav class="bottom mobile-only anchor">
         <ul>
