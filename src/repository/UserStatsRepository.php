@@ -26,13 +26,17 @@ class UserStatsRepository extends Repository {
         }
         
         $lastActiveDate = $stats['last_active_date'];
+        $currentStreak = $stats['streak'];
         $today = date('Y-m-d');
         $yesterday = date('Y-m-d', strtotime('-1 day'));
         
-        // First time user (no last_active_date)
-        if (!$lastActiveDate) {
+        // First time user (streak is 0 or no last_active_date)
+        if (!$lastActiveDate || $currentStreak == 0) {
             $this->updateLastActiveDate($userId);
             $this->setStreak($userId, 1);
+            if ($stats['longest_streak'] < 1) {
+                $this->updateLongestStreak($userId, 1);
+            }
             return [
                 'status' => 'new',
                 'streak' => 1,
@@ -44,14 +48,14 @@ class UserStatsRepository extends Repository {
         if ($lastActiveDate === $today) {
             return [
                 'status' => 'maintained',
-                'streak' => $stats['streak'],
+                'streak' => $currentStreak,
                 'message' => 'Streak already counted for today'
             ];
         }
         
         // Logged in yesterday - extend streak
         if ($lastActiveDate === $yesterday) {
-            $newStreak = $stats['streak'] + 1;
+            $newStreak = $currentStreak + 1;
             $this->updateLastActiveDate($userId);
             $this->setStreak($userId, $newStreak);
             
@@ -63,22 +67,32 @@ class UserStatsRepository extends Repository {
             return [
                 'status' => 'extended',
                 'streak' => $newStreak,
-                'previousStreak' => $stats['streak'],
+                'previousStreak' => $currentStreak,
                 'message' => "Streak extended to {$newStreak} days!"
             ];
         }
         
         // More than one day missed - streak lost
-        $lostStreak = $stats['streak'];
+        $lostStreak = $currentStreak;
         $this->updateLastActiveDate($userId);
         $this->setStreak($userId, 1);
         
+        // Only show lost popup if there was actually a streak to lose
+        if ($lostStreak > 1) {
+            return [
+                'status' => 'lost',
+                'streak' => 1,
+                'lostStreak' => $lostStreak,
+                'daysMissed' => (int)((strtotime($today) - strtotime($lastActiveDate)) / 86400),
+                'message' => "Streak lost! You missed {$lostStreak} day streak. Starting fresh with day 1."
+            ];
+        }
+        
+        // Had 1 day streak and missed - treat as new start
         return [
-            'status' => 'lost',
+            'status' => 'new',
             'streak' => 1,
-            'lostStreak' => $lostStreak,
-            'daysMissed' => (int)((strtotime($today) - strtotime($lastActiveDate)) / 86400),
-            'message' => "Streak lost! You missed {$lostStreak} day streak. Starting fresh with day 1."
+            'message' => 'Starting fresh with day 1!'
         ];
     }
     
@@ -212,6 +226,15 @@ class UserStatsRepository extends Repository {
         ');
         $query->bindParam(':user_id', $userId, PDO::PARAM_INT);
         $query->bindParam(':amount', $amount, PDO::PARAM_INT);
+        return $query->execute();
+    }
+
+    public function setLevel(int $userId, int $level): bool {
+        $query = $this->database->connect()->prepare('
+            UPDATE user_stats SET level = :level WHERE user_id = :user_id
+        ');
+        $query->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindParam(':level', $level, PDO::PARAM_INT);
         return $query->execute();
     }
 

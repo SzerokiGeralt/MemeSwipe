@@ -403,3 +403,51 @@
 .golden-profile .profile-header p {
     color: #d4af37;
 }
+
+/* VIP Badge styling in badges section */
+.badge-item .badge-icon {
+    font-size: 3rem;
+    display: block;
+    margin: 0.5rem auto;
+}
+
+.badge-item.vip-special {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+    border: 2px solid #ffd700;
+    color: #1a1a2e;
+}
+
+.badge-item.vip-special .badge-icon {
+    animation: crownBounce 2s ease-in-out infinite;
+}
+
+@keyframes crownBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.badge-item.golden-special {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    border: 2px solid #fcb69f;
+    color: #1a1a2e;
+}
+
+.badge-item.frame-special {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid #764ba2;
+    color: white;
+}
+
+.badge-item.cooldown-special {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border: 2px solid #38ef7d;
+    color: #1a1a2e;
+}
+
+.no-badges {
+    text-align: center;
+    color: var(--TextSecondary);
+    grid-column: 1 / -1;
+    padding: 2rem;
+    font-style: italic;
+}

@@ -117,7 +117,7 @@ INSERT INTO badges (name, description, icon) VALUES
 ('Consistent', 'Upload 50 posts', 'https://api.iconify.design/noto/chart-increasing.svg'),
 ('Diamond Collector', 'Earn 1000 diamonds', 'https://api.iconify.design/noto/gem-stone.svg'),
 ('Level 10', 'Reach level 10', 'https://api.iconify.design/noto/trophy.svg'),
-('VIP', 'A special badge for VIP members', 'https://api.iconify.design/noto/crown.svg');
+('VIP', 'Exclusive VIP Member', 'https://api.iconify.design/noto/crown.svg');
 
 -- Seed user_stats
 INSERT INTO user_stats (user_id, level, experience, diamonds, streak, longest_streak, posts_count) VALUES

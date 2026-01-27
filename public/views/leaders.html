@@ -12,7 +12,7 @@
     <nav class="top desktop-only anchor">
         <ul class="left">
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter min="0" max="1" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
             <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
             <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
         <?php endif; ?>
@@ -28,7 +28,7 @@
     <nav class="top mobile-only anchor">
         <ul>
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
+            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter min="0" max="1" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
             <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
             <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
         <?php endif; ?>
@@ -71,7 +71,6 @@
                                     <?php endif; ?>
                                 </td>
                                 <td class="user-info">
-                                    <img src="<?php echo htmlspecialchars($leader['profile_photo'] ?? 'https://picsum.photos/50/50'); ?>" alt="Profile" class="user-avatar">
                                     <span class="username"><?php echo htmlspecialchars($leader['username']); ?></span>
                                 </td>
                                 <td class="level"><?php echo htmlspecialchars($leader['level'] ?? 1); ?></td>

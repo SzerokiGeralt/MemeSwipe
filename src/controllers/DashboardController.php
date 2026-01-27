@@ -154,29 +154,43 @@ class DashboardController extends AppController {
 
         $currentLevel = $stats['level'];
         $currentExp = $stats['experience'];
+        $startingLevel = $currentLevel;
+        $totalBonusDiamonds = 0;
         
-        // Calculate total XP needed for current level
-        $totalXpForCurrentLevel = 0;
-        for ($i = 1; $i < $currentLevel; $i++) {
-            $totalXpForCurrentLevel += pow($i, 2) * 100;
+        // Keep checking for level ups (in case user gained enough XP for multiple levels)
+        while (true) {
+            // Calculate total XP needed to reach current level
+            $totalXpForCurrentLevel = 0;
+            for ($i = 1; $i < $currentLevel; $i++) {
+                $totalXpForCurrentLevel += pow($i, 2) * 100;
+            }
+            
+            // Calculate total XP needed to reach next level
+            $totalXpForNextLevel = $totalXpForCurrentLevel + (pow($currentLevel, 2) * 100);
+            
+            // Check if user has enough XP to level up
+            if ($currentExp >= $totalXpForNextLevel) {
+                // Level up! Add bonus diamonds for this level
+                $bonusDiamonds = $currentLevel * 50;
+                $totalBonusDiamonds += $bonusDiamonds;
+                $currentLevel++;
+            } else {
+                // No more level ups possible
+                break;
+            }
         }
         
-        // Calculate total XP needed for next level
-        $totalXpForNextLevel = $totalXpForCurrentLevel + (pow($currentLevel, 2) * 100);
-        
-        // Check if user has enough XP to level up
-        if ($currentExp >= $totalXpForNextLevel) {
-            // Level up!
-            $this->userStatsRepository->updateLevel($userId, 1);
-            
-            // Give bonus diamonds for leveling up
-            $bonusDiamonds = $currentLevel * 50;
-            $this->userStatsRepository->updateDiamonds($userId, $bonusDiamonds);
+        // If leveled up at least once
+        if ($currentLevel > $startingLevel) {
+            $levelsGained = $currentLevel - $startingLevel;
+            $this->userStatsRepository->setLevel($userId, $currentLevel);
+            $this->userStatsRepository->updateDiamonds($userId, $totalBonusDiamonds);
             
             return [
                 'leveled' => true,
-                'newLevel' => $currentLevel + 1,
-                'bonusDiamonds' => $bonusDiamonds
+                'newLevel' => $currentLevel,
+                'levelsGained' => $levelsGained,
+                'bonusDiamonds' => $totalBonusDiamonds
             ];
         }
         

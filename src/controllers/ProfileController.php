@@ -24,12 +24,16 @@ class ProfileController extends AppController {
                 header('Location: /login');
                 exit();
             }
-            // Show logged in user's profile
             $username = $_SESSION['username'];
+
+        }
+        if (isset($_SESSION['user_id'])) {
+            $ownUserStats = $this->userStatsRepository->getStatsByUserId($_SESSION['user_id']);
         }
 
         // Get user by username
         $user = $this->userRepository->getUserByUsername($username);
+        
 
         if (!$user) {
             // User not found - show 404
@@ -49,6 +53,9 @@ class ProfileController extends AppController {
         $vipStatus = $this->itemsRepository->getUserVipStatus($user['id']);
         $userStats = array_merge($userStats, $vipStatus);
         
+        // Check and award new badges based on user stats
+        $this->checkAndAwardBadges($user['id'], $userStats);
+        
         // Update last active date if viewing own profile
         if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $user['id']) {
             $this->userStatsRepository->updateLastActiveDate($user['id']);
@@ -66,7 +73,8 @@ class ProfileController extends AppController {
             'stats' => $userStats,
             'posts' => $userPosts,
             'badges' => $userBadges,
-            'isOwnProfile' => $isOwnProfile
+            'isOwnProfile' => $isOwnProfile,
+            'ownStats' => $ownUserStats ?? null
         ]);
     }
 
@@ -201,5 +209,66 @@ class ProfileController extends AppController {
 
         header('Location: /profile/edit');
         exit();
+    }
+
+    /**
+     * Check user's stats and award badges they've earned
+     */
+    private function checkAndAwardBadges(int $userId, array $stats): void {
+        // Get user's current badges to avoid checking ones they already have
+        $currentBadges = $this->userRepository->getUserBadges($userId);
+        $badgeNames = array_column($currentBadges, 'name');
+        
+        // Check "First Post" badge
+        if (!in_array('First Post', $badgeNames) && $stats['posts_count'] >= 1) {
+            $this->userRepository->assignBadgeToUser($userId, 'First Post');
+        }
+        
+        // Check "Streak Master" badge (7-day streak)
+        if (!in_array('Streak Master', $badgeNames) && $stats['longest_streak'] >= 7) {
+            $this->userRepository->assignBadgeToUser($userId, 'Streak Master');
+        }
+        
+        // Check "Consistent" badge (50 posts)
+        if (!in_array('Consistent', $badgeNames) && $stats['posts_count'] >= 50) {
+            $this->userRepository->assignBadgeToUser($userId, 'Consistent');
+        }
+        
+        // Check "Diamond Collector" badge (1000 diamonds)
+        if (!in_array('Diamond Collector', $badgeNames) && $stats['diamonds'] >= 1000) {
+            $this->userRepository->assignBadgeToUser($userId, 'Diamond Collector');
+        }
+        
+        // Check "Level 10" badge
+        if (!in_array('Level 10', $badgeNames) && $stats['level'] >= 10) {
+            $this->userRepository->assignBadgeToUser($userId, 'Level 10');
+        }
+        
+        // Check "Popular" badge (100 upvotes on a single post)
+        $posts = $this->userRepository->getUserPosts($userId);
+        $hasPopular = false;
+        $hasViral = false;
+        foreach ($posts as $post) {
+            if ($post['upvotes'] >= 100) {
+                $hasPopular = true;
+            }
+            if ($post['upvotes'] >= 1000) {
+                $hasViral = true;
+            }
+        }
+        
+        if (!in_array('Popular', $badgeNames) && $hasPopular) {
+            $this->userRepository->assignBadgeToUser($userId, 'Popular');
+        }
+        
+        // Check "Viral" badge (1000 upvotes on a single post)
+        if (!in_array('Viral', $badgeNames) && $hasViral) {
+            $this->userRepository->assignBadgeToUser($userId, 'Viral');
+        }
+        
+        // Check "VIP" badge (if user owns VIP Badge item)
+        if (!in_array('VIP', $badgeNames) && ($stats['has_vip_badge'] ?? false)) {
+            $this->userRepository->assignBadgeToUser($userId, 'VIP');
+        }
     }
 }

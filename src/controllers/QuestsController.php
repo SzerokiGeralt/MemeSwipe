@@ -215,6 +215,7 @@ class QuestsController extends AppController {
 
             case 'VIP Badge':
                 $this->itemsRepository->addItemToUser($userId, $item['id']);
+                $this->userRepository->assignBadgeToUser($userId, 'VIP');
                 $response['message'] = "VIP Badge unlocked! You now have a crown badge on your profile! 👑";
                 $response['effect'] = 'vip_badge';
                 break;

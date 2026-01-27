@@ -4,7 +4,6 @@ main.scrollable {
 }
 
 div.selection-bar {
-    position: sticky;
     top: var(--navbar-height);
     margin-bottom: 2rem;
 }

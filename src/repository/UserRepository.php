@@ -120,4 +120,31 @@ class UserRepository extends Repository {
         $query = null;
         return;
     }
+
+    public function assignBadgeToUser(int $userId, string $badgeName): bool {
+        // First, get the badge ID by name
+        $stmt = $this->database->connect()->prepare('
+            SELECT id FROM badges WHERE name = :badge_name
+        ');
+        $stmt->bindParam(':badge_name', $badgeName);
+        $stmt->execute();
+        $badge = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$badge) {
+            return false; // Badge not found
+        }
+        
+        $badgeId = $badge['id'];
+        
+        // Now, assign the badge to the user
+        $stmt = $this->database->connect()->prepare('
+            INSERT INTO users_badges (user_id, badge_id)
+            VALUES (:user_id, :badge_id)
+            ON CONFLICT (user_id, badge_id) DO NOTHING
+        ');
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindParam(':badge_id', $badgeId, PDO::PARAM_INT);
+        
+        return $stmt->execute();
+    }
 }

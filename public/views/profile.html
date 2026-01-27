@@ -12,9 +12,9 @@
     <nav class="top desktop-only anchor">
         <ul class="left">
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
-            <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
-            <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
+            <li>Lvl <?php echo htmlspecialchars($ownStats['level'] ?? 'N/A'); ?> <meter id="disk_d" min="0" max="1" value="<?php echo ($ownStats['expPercentage'] ?? 0); ?>"></meter></li>
+            <li><?php echo number_format($ownStats['diamonds'] ?? 0); ?> 💎</li>
+            <li><?php echo $ownStats['streak'] ?? 0; ?> <?php echo ($ownStats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
         <?php endif; ?>
         </ul>
         <ul class="right">
@@ -28,9 +28,9 @@
     <nav class="top mobile-only anchor">
         <ul>
             <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?> <meter id="disk_d" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
-            <li><?php echo number_format($stats['diamonds'] ?? 0); ?> 💎</li>
-            <li><?php echo $stats['streak'] ?? 0; ?> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
+            <li>Lvl <?php echo htmlspecialchars($ownStats['level'] ?? 'N/A'); ?> <meter min="0" max="1" value="<?php echo ($ownStats['expPercentage'] ?? 0); ?>"></meter></li>
+            <li><?php echo number_format($ownStats['diamonds'] ?? 0); ?> 💎</li>
+            <li><?php echo $ownStats['streak'] ?? 0; ?> <?php echo ($ownStats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
             <?php endif; ?>
         </ul>
     </nav>
@@ -74,8 +74,8 @@
             </div>
         </div>
         <div class="tab-content badges">
-            <?php if (!empty($badges)): ?>
-                <div class="badges-grid">
+            <div class="badges-grid">
+                <?php if (!empty($badges)): ?>
                     <?php foreach ($badges as $badge): ?>
                         <div class="badge-item">
                             <p><?php echo htmlspecialchars($badge['name']); ?></p>
@@ -83,8 +83,11 @@
                             <p><?php echo htmlspecialchars($badge['description']); ?></p>
                         </div>
                     <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+                <?php endif; ?>
+                <?php if (empty($badges) && !($stats['has_vip_badge'] ?? false) && !($stats['has_golden_profile'] ?? false) && !($stats['has_avatar_frame'] ?? false) && !($stats['has_cooldown_reducer'] ?? false)): ?>
+                    <p class="no-badges">No badges yet. Keep playing to earn badges!</p>
+                <?php endif; ?>
+            </div>
         </div>
         <div class="tab-content collection">
             <?php if (!empty($posts)): ?>

@@ -13,7 +13,7 @@
     <nav class="top">
         <ul class="left">
         <?php if (isset($_SESSION['user_id'])): ?>
-            <li>Lvl <span id="user-level"><?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?></span> <meter id="exp-meter" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
+            <li>Lvl <span id="user-level"><?php echo htmlspecialchars($stats['level'] ?? 'N/A'); ?></span> <meter id="exp-meter" min="0" max="1" value="<?php echo ($stats['expPercentage'] ?? 0); ?>"></meter></li>
             <li><span id="user-diamonds"><?php echo number_format($stats['diamonds'] ?? 0); ?></span> 💎</li>
             <li><span id="user-streak"><?php echo $stats['streak'] ?? 0; ?></span> <?php echo ($stats['streakActive'] ?? false) ? '🔥' : '🧊'; ?></li>
         <?php endif; ?>
@@ -112,7 +112,6 @@
         <ul>
             <?php if (isset($_SESSION['user_id'])): ?>
                 <li class="desktop-only"><button type="button" id="downvote-btn" <?php echo !$post ? 'disabled' : ''; ?>>Downvote <span class="material-symbols-outlined">thumb_down</span></button></li>
-                <li class="desktop-only"><button type="button" id="skip-btn" <?php echo !$post ? 'disabled' : ''; ?>>Skip <span class="material-symbols-outlined">skip_next</span></button></li>
                 <li class="desktop-only"><button type="button" id="upvote-btn" <?php echo !$post ? 'disabled' : ''; ?>>Upvote <span class="material-symbols-outlined">thumb_up</span></button></li>
             <?php else: ?>
                 <li class="desktop-only"><button type="button" id="login-prompt-btn">Login to Vote <span class="material-symbols-outlined">login</span></button></li>
@@ -291,9 +290,14 @@
                     postImage.classList.remove('swipe-right', 'swipe-left');
                     postImage.classList.add('slide-in');
                     
-                    document.getElementById('upvote-count').textContent = nextPost.upvotes;
-                    document.getElementById('downvote-count').textContent = nextPost.downvotes;
-                    document.querySelector('.post-author').textContent = '@' + nextPost.username;
+                    // Update post author if element exists
+                    const postAuthor = document.querySelector('.post-author');
+                    if (postAuthor) {
+                        postAuthor.textContent = '@' + nextPost.username;
+                        postAuthor.onclick = function() {
+                            window.location.href = '/profile/' + nextPost.username;
+                        };
+                    }
                     
                     setTimeout(() => {
                         postImage.classList.remove('slide-in');
