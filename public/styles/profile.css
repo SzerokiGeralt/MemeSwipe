@@ -330,6 +330,8 @@
     position: relative;
     z-index: 1;
     text-align: center;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
 }
 
 .profile-image-container {
