@@ -174,15 +174,17 @@ class UserStatsRepository extends Repository {
             // Calculate total XP needed to reach next level
             $totalXpForNextLevel = $totalXpForCurrentLevel + (pow($currentLevel, 2) * 100);
             
-            // XP required to go from current level to next level
-            $stats['expRequiredForNextLevel'] = pow($currentLevel, 2) * 100;
+            $stats['totalXpForNextLevel'] = $totalXpForNextLevel;
+
+            $stats['totalXpForCurrentLevel'] = $totalXpForCurrentLevel;
+
             
             // XP remaining to reach next level
             $stats['expToNextLevel'] = $totalXpForNextLevel - $currentExp;
             
             // Current progress within this level (for progress bar, 0-1)
-            if ($stats['expRequiredForNextLevel'] > 0) {
-                $stats['expPercentage'] = $currentExp / $stats['expRequiredForNextLevel'];
+            if ($stats['expToNextLevel'] > 0) {
+                $stats['expPercentage'] = ($currentExp - $totalXpForCurrentLevel) / ($totalXpForNextLevel - $totalXpForCurrentLevel);
             } else {
                 $stats['expPercentage'] = 0;
             }
@@ -195,6 +197,26 @@ class UserStatsRepository extends Repository {
         }
         
         return $stats;
+    }
+
+    public function getExperienceNeededForNextLevel(int $userId): ?int {
+        $stats = $this->getStatsByUserId($userId);
+        if (!$stats) {
+            return null;
+        }
+        $currentLevel = $stats['level'];
+        $currentExp = $stats['experience'];
+        
+        // Calculate total XP at start of current level
+        $totalXpForCurrentLevel = 0;
+        for ($i = 1; $i < $currentLevel; $i++) {
+            $totalXpForCurrentLevel += pow($i, 2) * 100;
+        }
+        
+        // Calculate total XP needed to reach next level
+        $totalXpForNextLevel = $totalXpForCurrentLevel + (pow($currentLevel, 2) * 100);
+        
+        return $totalXpForNextLevel - $currentExp;
     }
 
     public function createStatsForUser(int $userId) {
@@ -234,13 +256,61 @@ class UserStatsRepository extends Repository {
         return $query->execute();
     }
 
-    public function updateExperience(int $userId, int $amount): bool {
+    public function updateExperience(int $userId, int $amount): array {
+        // Add experience
         $query = $this->database->connect()->prepare('
             UPDATE user_stats SET experience = experience + :amount WHERE user_id = :user_id
         ');
         $query->bindParam(':user_id', $userId, PDO::PARAM_INT);
         $query->bindParam(':amount', $amount, PDO::PARAM_INT);
-        return $query->execute();
+        $query->execute();
+        
+        // Get updated stats and check for level up
+        $stats = $this->getStatsByUserId($userId);
+        if (!$stats) {
+            return ['success' => false, 'leveledUp' => false];
+        }
+        
+        $currentLevel = $stats['level'];
+        $currentExp = $stats['experience'];
+        $levelsGained = 0;
+        
+        // Check if user leveled up (potentially multiple times)
+        while (true) {
+            // Calculate total XP needed to reach next level
+            $totalXpForCurrentLevel = 0;
+            for ($i = 1; $i < $currentLevel; $i++) {
+                $totalXpForCurrentLevel += pow($i, 2) * 100;
+            }
+            
+            $totalXpForNextLevel = $totalXpForCurrentLevel + (pow($currentLevel, 2) * 100);
+            
+            // If we have enough XP, level up
+            if ($currentExp >= $totalXpForNextLevel) {
+                $currentLevel++;
+                $levelsGained++;
+            } else {
+                break;
+            }
+        }
+        
+        // Update level if we leveled up
+        if ($levelsGained > 0) {
+            $this->setLevel($userId, $currentLevel);
+            
+            return [
+                'success' => true,
+                'leveledUp' => true,
+                'levelsGained' => $levelsGained,
+                'newLevel' => $currentLevel,
+                'oldLevel' => $stats['level']
+            ];
+        }
+        
+        return [
+            'success' => true,
+            'leveledUp' => false
+        ];
     }
 
     public function updateStreak(int $userId, int $amount): bool {

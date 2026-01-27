@@ -173,7 +173,8 @@ class QuestsController extends AppController {
 
         switch ($item['name']) {
             case 'Instant Level Up':
-                $this->userStatsRepository->updateLevel($userId, 1);
+                $requiredEXP = $this->userStatsRepository->getExperienceNeededForNextLevel($userId) + 1;
+                $this->userStatsRepository->updateExperience($userId, $requiredEXP);
                 $response['message'] = 'Level up! You gained 1 level! 🎉';
                 $response['effect'] = 'level_up';
                 break;
@@ -187,9 +188,9 @@ class QuestsController extends AppController {
             case 'Mystery Box':
                 // Random rewards
                 $rewards = [
-                    ['type' => 'diamonds', 'amount' => rand(50, 200)],
-                    ['type' => 'experience', 'amount' => rand(100, 500)],
-                    ['type' => 'both', 'diamonds' => rand(25, 100), 'experience' => rand(50, 250)]
+                    ['type' => 'diamonds', 'amount' => rand(50, 1000)],
+                    ['type' => 'experience', 'amount' => rand(100, 10000)],
+                    ['type' => 'both', 'diamonds' => rand(25, 1000), 'experience' => rand(50, 1000)]
                 ];
                 $reward = $rewards[array_rand($rewards)];
                 

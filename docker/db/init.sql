@@ -121,11 +121,11 @@ INSERT INTO badges (name, description, icon) VALUES
 
 -- Seed user_stats
 INSERT INTO user_stats (user_id, level, experience, diamonds, streak, longest_streak, posts_count) VALUES
-(1, 12, 15400, 1250, 5, 14, 45),
-(2, 8, 4900, 800, 3, 8, 28),
-(3, 15, 24800, 2100, 10, 15, 67),
-(4, 5, 1500, 420, 2, 5, 15),
-(5, 20, 57000, 3500, 7, 20, 92);
+(1, 12, 60000 , 1250, 5, 14, 45),
+(2, 8, 20000, 800, 3, 8, 28),
+(3, 15, 120000 , 2100, 10, 15, 67),
+(4, 5, 3500, 420, 2, 5, 15),
+(5, 20, 277000, 3500, 7, 20, 92);
 
 -- Seed items BEFORE user_items (foreign key constraint)
 INSERT INTO items (name, description, icon, cost, max_quantity) VALUES

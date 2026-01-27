@@ -71,7 +71,9 @@
                 <p class="stats-item">Longest streak: <?php echo $stats['longest_streak'] ?? 0; ?></p>
                 <p class="stats-item">Posts: <?php echo $stats['posts_count'] ?? 0; ?></p>
                 <p class="stats-item">Experience: <?php echo $stats['experience'] ?? 0; ?> XP</p>
-                
+                <p class="stats-item">totalXpForNextLevel: <?php echo $stats['totalXpForNextLevel'] ?? 0; ?> XP</p>
+                <p class="stats-item">totalXpForCurrentLevel: <?php echo $stats['totalXpForCurrentLevel'] ?? 0; ?> XP</p>
+                <p class="stats-item">Experience to next level: <?php echo $stats['expToNextLevel'] ?? 0; ?> XP</p>
             </div>
         </div>
         <div class="tab-content badges">
@@ -101,6 +103,9 @@
                         </div>
                     <?php endforeach; ?>
                 </div>
+            <?php endif; ?>
+            <?php if (empty($posts)): ?>
+                <p class="no-posts">No posts uploaded yet. Share your memes to see them here!</p>
             <?php endif; ?>
         </div>
         

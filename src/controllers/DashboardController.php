@@ -84,12 +84,32 @@ class DashboardController extends AppController {
             $diamondsGained += rand(0, 5);
         }
 
-        // Update user stats
-        $this->userStatsRepository->updateExperience($userId, $expGained);
+        // Update user experience and check for level up automatically
+        $expUpdateResult = $this->userStatsRepository->updateExperience($userId, $expGained);
         $this->userStatsRepository->updateDiamonds($userId, $diamondsGained);
 
-        // Check for level up
-        $levelUpInfo = $this->checkAndProcessLevelUp($userId);
+        // Process level up if it occurred
+        $levelUpInfo = null;
+        if ($expUpdateResult['leveledUp']) {
+            $levelsGained = $expUpdateResult['levelsGained'];
+            $bonusDiamonds = 0;
+            
+            // Calculate bonus diamonds for each level gained
+            for ($i = 0; $i < $levelsGained; $i++) {
+                $levelReached = $expUpdateResult['oldLevel'] + $i + 1;
+                $bonusDiamonds += $levelReached * 50;
+            }
+            
+            // Add bonus diamonds
+            $this->userStatsRepository->updateDiamonds($userId, $bonusDiamonds);
+            
+            $levelUpInfo = [
+                'leveled' => true,
+                'newLevel' => $expUpdateResult['newLevel'],
+                'levelsGained' => $levelsGained,
+                'bonusDiamonds' => $bonusDiamonds
+            ];
+        }
         
         // Progress vote quests
         $completedQuests = $this->questsRepository->progressQuestsByAction($userId, 'vote', 1);
@@ -145,56 +165,6 @@ class DashboardController extends AppController {
         }
 
         echo json_encode($response);
-    }
-
-    private function checkAndProcessLevelUp(int $userId): ?array {
-        $stats = $this->userStatsRepository->getStatsByUserId($userId);
-        
-        if (!$stats) return null;
-
-        $currentLevel = $stats['level'];
-        $currentExp = $stats['experience'];
-        $startingLevel = $currentLevel;
-        $totalBonusDiamonds = 0;
-        
-        // Keep checking for level ups (in case user gained enough XP for multiple levels)
-        while (true) {
-            // Calculate total XP needed to reach current level
-            $totalXpForCurrentLevel = 0;
-            for ($i = 1; $i < $currentLevel; $i++) {
-                $totalXpForCurrentLevel += pow($i, 2) * 100;
-            }
-            
-            // Calculate total XP needed to reach next level
-            $totalXpForNextLevel = $totalXpForCurrentLevel + (pow($currentLevel, 2) * 100);
-            
-            // Check if user has enough XP to level up
-            if ($currentExp >= $totalXpForNextLevel) {
-                // Level up! Add bonus diamonds for this level
-                $bonusDiamonds = $currentLevel * 50;
-                $totalBonusDiamonds += $bonusDiamonds;
-                $currentLevel++;
-            } else {
-                // No more level ups possible
-                break;
-            }
-        }
-        
-        // If leveled up at least once
-        if ($currentLevel > $startingLevel) {
-            $levelsGained = $currentLevel - $startingLevel;
-            $this->userStatsRepository->setLevel($userId, $currentLevel);
-            $this->userStatsRepository->updateDiamonds($userId, $totalBonusDiamonds);
-            
-            return [
-                'leveled' => true,
-                'newLevel' => $currentLevel,
-                'levelsGained' => $levelsGained,
-                'bonusDiamonds' => $totalBonusDiamonds
-            ];
-        }
-        
-        return null;
     }
 
     public function getNextPost() {
