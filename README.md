@@ -62,7 +62,7 @@ Platforma do przeglądania, oceniania i dodawania memów z systemem poziomów, n
 
 ### 8. Ochrona uploadu plików
 - **Jak:**
-	- Sprawdzanie typu MIME (tylko obrazy JPEG, PNG, WebP)
+	- Sprawdzanie typu MEMA (tylko obrazy JPEG, PNG, WebP)
 	- Limit rozmiaru pliku (max 5MB)
 	- Unikalna nazwa pliku
 - **Gdzie:**
