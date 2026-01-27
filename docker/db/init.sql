@@ -76,7 +76,7 @@ CREATE TABLE user_stats (
     longest_streak INTEGER DEFAULT 0,
     posts_count INTEGER DEFAULT 0,
     last_active_date DATE DEFAULT CURRENT_DATE,
-    last_upload_date DATE DEFAULT CURRENT_DATE
+    last_upload_date TIMESTAMP DEFAULT NULL
 );
 
 -- Users badges junction table

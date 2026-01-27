@@ -46,24 +46,18 @@ class UploadController extends AppController {
     
     /**
      * Get cooldown info for user
-     * Uses session to store exact upload time since DB only stores date
+     * Uses database timestamp for per-user cooldown tracking
      */
     private function getCooldownInfo(int $userId, array $userStats): array {
         // Check if user has cooldown reducer item
         $hasCooldownReducer = $this->itemsRepository->userOwnsItemByName($userId, 'Cooldown Reducer');
         $cooldownHours = $hasCooldownReducer ? self::REDUCED_COOLDOWN_HOURS : self::DEFAULT_COOLDOWN_HOURS;
         
-        // Check session for exact upload time (more precise than DATE in DB)
-        $lastUploadTimestamp = $_SESSION['last_upload_time'] ?? null;
+        // Use database timestamp for user-specific cooldown
         $lastUploadDate = $userStats['last_upload_date'] ?? null;
         
-        // If session doesn't have the time but DB has date, use DB date at midnight
-        if (!$lastUploadTimestamp && $lastUploadDate) {
-            $lastUploadTimestamp = strtotime($lastUploadDate . ' 00:00:00');
-        }
-        
-        if (!$lastUploadTimestamp) {
-            // Never uploaded - can upload now
+        if (!$lastUploadDate) {
+            // Never uploaded - can upload now (first upload is always available)
             return [
                 'can_upload' => true,
                 'cooldown_hours' => $cooldownHours,
@@ -75,6 +69,8 @@ class UploadController extends AppController {
             ];
         }
         
+        // Parse the database timestamp
+        $lastUploadTimestamp = strtotime($lastUploadDate);
         $now = time();
         $nextUploadTime = $lastUploadTimestamp + ($cooldownHours * 3600);
         
@@ -152,10 +148,10 @@ class UploadController extends AppController {
             return;
         }
         
-        // Validate file size (max 10MB)
-        $maxSize = 10 * 1024 * 1024; // 10MB
+        // Validate file size (max 5MB)
+        $maxSize = 5 * 1024 * 1024; // 5MB
         if ($file['size'] > $maxSize) {
-            echo json_encode(['success' => false, 'message' => 'File too large. Maximum size is 10MB']);
+            echo json_encode(['success' => false, 'message' => 'File too large. Maximum size is 5MB']);
             return;
         }
         
@@ -188,10 +184,9 @@ class UploadController extends AppController {
             return;
         }
         
-        // Update user stats and session
+        // Update user stats
         $this->userStatsRepository->updateLastUploadDate($userId);
         $this->userStatsRepository->incrementPostsCount($userId);
-        $_SESSION['last_upload_time'] = time(); // Store exact time in session
         
         // Progress upload quests
         $completedQuests = $this->questsRepository->progressQuestsByAction($userId, 'upload', 1);

@@ -79,9 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Validate file size (10MB)
-        if (file.size > 10 * 1024 * 1024) {
-            showPopup('❌', 'File Too Large', 'Maximum file size is 10MB.');
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showPopup('❌', 'File Too Large', 'Maximum file size is 5MB.');
             return;
         }
         

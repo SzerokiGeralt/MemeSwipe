@@ -147,9 +147,7 @@ class DashboardController extends AppController {
                 'level' => $updatedStats['level'],
                 'diamonds' => $updatedStats['diamonds'],
                 'streak' => $updatedStats['streak'],
-                'expPercentage' => $updatedStats['expPercentage'],
-                'expInCurrentLevel' => $updatedStats['expInCurrentLevel'],
-                'expRequiredForNextLevel' => $updatedStats['expRequiredForNextLevel']
+                'expPercentage' => $updatedStats['expPercentage'] ?? 0
             ],
             'nextPost' => $nextPost
         ];

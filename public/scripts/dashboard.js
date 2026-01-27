@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard JS loaded');
+    
     const postContainer = document.getElementById('post-container');
     const postImage = document.getElementById('post-image');
     const upvoteBtn = document.getElementById('upvote-btn');
@@ -7,6 +9,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const rewardPopup = document.getElementById('rewardPopup');
     const levelUpPopup = document.getElementById('levelUpPopup');
     const levelUpClose = document.getElementById('levelUpClose');
+    
+    console.log('Elements found:', {
+        postContainer: !!postContainer,
+        postImage: !!postImage,
+        upvoteBtn: !!upvoteBtn,
+        downvoteBtn: !!downvoteBtn,
+        rewardPopup: !!rewardPopup
+    });
     
     // Streak popups
     const streakExtendedPopup = document.getElementById('streakExtendedPopup');
@@ -28,10 +38,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Vote function
     async function vote(voteType) {
-        if (isVoting) return;
+        console.log('Vote called:', voteType);
         
+        if (isVoting) {
+            console.log('Already voting, returning');
+            return;
+        }
+        
+        if (!postContainer) {
+            console.log('No post container');
+            return;
+        }
         const postId = postContainer.dataset.postId;
-        if (!postId) return;
+        console.log('Post ID:', postId);
+        
+        if (!postId) {
+            console.log('No post ID');
+            return;
+        }
 
         isVoting = true;
         
@@ -41,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (skipBtn) skipBtn.disabled = true;
 
         try {
+            console.log('Sending vote request...');
             const response = await fetch('/dashboard/vote', {
                 method: 'POST',
                 headers: {
@@ -52,9 +77,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
 
+            console.log('Response status:', response.status);
             const data = await response.json();
+            console.log('Response data:', data);
 
             if (data.success) {
+                console.log('Vote successful, showing popup');
                 // Show reward popup
                 showRewardPopup(data.rewards.exp, data.rewards.diamonds, voteType);
                 
@@ -70,19 +98,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Load next post after animation
                 setTimeout(() => {
+                    console.log('Loading next post:', data.nextPost);
                     loadNextPost(data.nextPost);
+                    isVoting = false;
                 }, 1000);
             } else {
                 console.error('Vote failed:', data.message);
                 // Re-enable buttons on error
                 enableButtons();
+                isVoting = false;
             }
         } catch (error) {
             console.error('Error voting:', error);
             enableButtons();
+            isVoting = false;
         }
-
-        isVoting = false;
     }
 
     // Show reward popup
@@ -90,27 +120,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const rewardExp = document.getElementById('reward-exp');
         const rewardDiamonds = document.getElementById('reward-diamonds');
         
-        rewardExp.textContent = `+${exp} XP`;
-        rewardDiamonds.textContent = `+${diamonds} 💎`;
+        if (rewardExp) rewardExp.textContent = `+${exp} XP`;
+        if (rewardDiamonds) rewardDiamonds.textContent = `+${diamonds} 💎`;
         
         // Position popup near the clicked button
-        rewardPopup.classList.add('show');
-        rewardPopup.classList.add(voteType);
+        if (rewardPopup) {
+            rewardPopup.classList.add('show');
+            rewardPopup.classList.add(voteType);
+        }
         
         // Animate the post image
-        postImage.classList.add(voteType === 'upvote' ? 'swipe-right' : 'swipe-left');
+        if (postImage) {
+            postImage.classList.add(voteType === 'upvote' ? 'swipe-right' : 'swipe-left');
+        }
         
         setTimeout(() => {
-            rewardPopup.classList.remove('show');
-            rewardPopup.classList.remove(voteType);
+            if (rewardPopup) {
+                rewardPopup.classList.remove('show');
+                rewardPopup.classList.remove(voteType);
+            }
         }, 1500);
     }
 
     // Show level up popup
     function showLevelUpPopup(newLevel, bonusDiamonds) {
-        document.getElementById('levelUpMessage').textContent = `You reached level ${newLevel}!`;
-        document.getElementById('levelUpBonus').textContent = `Bonus: +${bonusDiamonds} 💎`;
-        levelUpPopup.classList.add('show');
+        const levelUpMessage = document.getElementById('levelUpMessage');
+        const levelUpBonus = document.getElementById('levelUpBonus');
+        if (levelUpMessage) levelUpMessage.textContent = `You reached level ${newLevel}!`;
+        if (levelUpBonus) levelUpBonus.textContent = `Bonus: +${bonusDiamonds} 💎`;
+        if (levelUpPopup) levelUpPopup.classList.add('show');
     }
 
     // Update navbar stats
@@ -126,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load next post
     function loadNextPost(nextPost) {
-        if (nextPost) {
+        if (nextPost && postContainer && postImage) {
             postContainer.dataset.postId = nextPost.id;
             postImage.src = nextPost.image;
             postImage.classList.remove('swipe-right', 'swipe-left');
@@ -142,10 +180,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             setTimeout(() => {
-                postImage.classList.remove('slide-in');
+                if (postImage) postImage.classList.remove('slide-in');
                 enableButtons();
             }, 300);
-        } else {
+        } else if (postContainer) {
             // No more posts
             postContainer.innerHTML = `
                 <div class="no-posts">
@@ -170,6 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Skip to next post without voting
     async function skipPost() {
         if (isVoting) return;
+        if (!postImage) return;
         isVoting = true;
         
         postImage.classList.add('fade-out');
@@ -204,9 +243,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Close level up popup
-    levelUpClose.addEventListener('click', () => {
-        levelUpPopup.classList.remove('show');
-    });
+    if (levelUpClose) {
+        levelUpClose.addEventListener('click', () => {
+            levelUpPopup.classList.remove('show');
+        });
+    }
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
