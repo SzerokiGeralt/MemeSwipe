@@ -181,15 +181,11 @@ class UserStatsRepository extends Repository {
             $stats['expToNextLevel'] = $totalXpForNextLevel - $currentExp;
             
             // Current progress within this level (for progress bar, 0-1)
-            $expInCurrentLevel = $currentExp - $totalXpForCurrentLevel;
             if ($stats['expRequiredForNextLevel'] > 0) {
-                $stats['expPercentage'] = $expInCurrentLevel / $stats['expRequiredForNextLevel'];
+                $stats['expPercentage'] = $currentExp / $stats['expRequiredForNextLevel'];
             } else {
                 $stats['expPercentage'] = 0;
             }
-            
-            // Add current XP within level for display
-            $stats['expInCurrentLevel'] = max(0, $expInCurrentLevel);
             
             // Add streak active status
             $lastActiveDate = $stats['last_active_date'];
